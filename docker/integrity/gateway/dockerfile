@@ -1,0 +1,15 @@
+# 基础镜像
+FROM  openjdk:8-jre
+# author
+MAINTAINER Integrity-Supervision-Platform
+
+# 挂载目录
+VOLUME /home/integrity
+# 创建目录
+RUN mkdir -p /home/integrity
+# 指定路径
+WORKDIR /home/integrity
+# 复制jar文件到路径
+COPY ./jar/integrity-gateway.jar /home/integrity/integrity-gateway.jar
+# 启动网关服务
+ENTRYPOINT ["java","-jar","integrity-gateway.jar"]

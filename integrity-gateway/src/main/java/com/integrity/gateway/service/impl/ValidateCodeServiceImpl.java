@@ -1,0 +1,138 @@
+package com.integrity.gateway.service.impl;
+
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+import jakarta.annotation.Resource;
+import javax.imageio.ImageIO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.util.FastByteArrayOutputStream;
+import com.google.code.kaptcha.Producer;
+import com.integrity.common.core.constant.CacheConstants;
+import com.integrity.common.core.constant.Constants;
+import com.integrity.common.core.exception.CaptchaException;
+import com.integrity.common.core.utils.StringUtils;
+import com.integrity.common.core.utils.sign.Base64;
+import com.integrity.common.core.utils.uuid.IdUtils;
+import com.integrity.common.core.web.domain.AjaxResult;
+import com.integrity.common.redis.service.RedisService;
+import com.integrity.gateway.config.properties.CaptchaProperties;
+import com.integrity.gateway.service.ValidateCodeService;
+
+/**
+ * 验证码实现处理
+ *
+ * @author Integrity-Supervision-Platform
+ */
+@Service
+public class ValidateCodeServiceImpl implements ValidateCodeService
+{
+    private static final Logger log = LoggerFactory.getLogger(ValidateCodeServiceImpl.class);
+
+    @Resource(name = "captchaProducer")
+    private Producer captchaProducer;
+
+    @Resource(name = "captchaProducerMath")
+    private Producer captchaProducerMath;
+
+    @Autowired
+    private RedisService redisService;
+
+    @Autowired
+    private CaptchaProperties captchaProperties;
+
+    /**
+     * 生成验证码
+     */
+    @Override
+    public AjaxResult createCaptcha() throws IOException, CaptchaException
+    {
+        AjaxResult ajax = AjaxResult.success();
+        Boolean captchaEnabledValue = captchaProperties.getEnabled();
+        if (captchaEnabledValue == null)
+        {
+            log.warn("security.captcha.enabled is not bound, fallback to enabled");
+            captchaEnabledValue = Boolean.TRUE;
+        }
+        boolean captchaEnabled = captchaEnabledValue;
+        ajax.put("captchaEnabled", captchaEnabled);
+        if (!captchaEnabled)
+        {
+            return ajax;
+        }
+
+        // 保存验证码信息
+        String uuid = IdUtils.simpleUUID();
+        String verifyKey = CacheConstants.CAPTCHA_CODE_KEY + uuid;
+
+        String capStr = null, code = null;
+        BufferedImage image = null;
+
+        String captchaType = StringUtils.nvl(captchaProperties.getType(), "math");
+        // 生成验证码
+        if ("char".equals(captchaType))
+        {
+            capStr = code = captchaProducer.createText();
+            image = captchaProducer.createImage(capStr);
+        }
+        else
+        {
+            if (!"math".equals(captchaType))
+            {
+                log.warn("Unknown captcha type '{}', fallback to math", captchaType);
+            }
+            String capText = captchaProducerMath.createText();
+            capStr = capText.substring(0, capText.lastIndexOf("@"));
+            code = capText.substring(capText.lastIndexOf("@") + 1);
+            image = captchaProducerMath.createImage(capStr);
+        }
+
+        if (image == null)
+        {
+            return AjaxResult.error("验证码图片生成失败");
+        }
+
+        redisService.setCacheObject(verifyKey, code, Constants.CAPTCHA_EXPIRATION, TimeUnit.MINUTES);
+        // 转换流信息写出
+        FastByteArrayOutputStream os = new FastByteArrayOutputStream();
+        try
+        {
+            ImageIO.write(image, "jpg", os);
+        }
+        catch (IOException e)
+        {
+            return AjaxResult.error(e.getMessage());
+        }
+
+        ajax.put("uuid", uuid);
+        ajax.put("img", Base64.encode(os.toByteArray()));
+        return ajax;
+    }
+
+    /**
+     * 校验验证码
+     */
+    @Override
+    public void checkCaptcha(String code, String uuid) throws CaptchaException
+    {
+        if (StringUtils.isEmpty(code))
+        {
+            throw new CaptchaException("验证码不能为空");
+        }
+        String verifyKey = CacheConstants.CAPTCHA_CODE_KEY + StringUtils.nvl(uuid, "");
+        String captcha = redisService.getCacheObject(verifyKey);
+        if (captcha == null)
+        {
+            throw new CaptchaException("验证码已失效");
+        }
+        redisService.deleteObject(verifyKey);
+        if (!code.equalsIgnoreCase(captcha))
+        {
+            throw new CaptchaException("验证码错误");
+        }
+    }
+}
+

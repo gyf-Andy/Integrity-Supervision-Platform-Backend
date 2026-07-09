@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.integrity.job.mapper.SysJobLogMapper">
+
+    <resultMap type="SysJobLog" id="SysJobLogResult">
+        <id property="jobLogId" column="job_log_id"/>
+        <result property="jobId" column="job_id"/>
+        <result property="jobName" column="job_name"/>
+        <result property="jobGroup" column="job_group"/>
+        <result property="invokeTarget" column="invoke_target"/>
+        <result property="jobMessage" column="job_message"/>
+        <result property="status" column="status"/>
+        <result property="exceptionInfo" column="exception_info"/>
+        <result property="createTime" column="create_time"/>
+        <result property="batchDate" column="batch_date"/>
+        <result property="dependentId" column="dependent_id"/>
+        <result property="startTime" column="start_time"/>
+        <result property="stopTime" column="stop_time"/>
+        <result property="runTime" column="run_time"/>
+        <result property="runMode" column="run_mode"/>
+    </resultMap>
+
+    <sql id="selectJobLogVo">
+        select job_log_id, job_id, job_name, job_group, invoke_target, job_message, status, exception_info,
+        create_time, batch_date, dependent_id, start_time, stop_time,run_time,run_mode
+        from sys_job_log
+    </sql>
+
+    <select id="selectJobLogList" parameterType="SysJobLog" resultMap="SysJobLogResult">
+        <include refid="selectJobLogVo"/>
+        <where>
+            <if test="jobName != null and jobName != ''">
+                AND job_name like concat('%', #{jobName}, '%')
+            </if>
+            <if test="jobGroup != null and jobGroup != '' and jobGroup.equals('DEFAULT')">
+                AND job_group = #{jobGroup} and dependent_id is null
+            </if>
+            <if test="jobGroup != null and jobGroup != '' and jobGroup.equals('TASK_GROUP')">
+                AND job_group = #{jobGroup} and dependent_id is not null
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+            <if test="batchDate != null and batchDate != ''">
+                AND batch_date = #{batchDate}
+            </if>
+            <if test="invokeTarget != null and invokeTarget != ''">
+                AND invoke_target like concat('%', #{invokeTarget}, '%')
+            </if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                and date_format(create_time,'%Y%m%d') &gt;= date_format(#{params.beginTime},'%Y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                and date_format(create_time,'%Y%m%d') &lt;= date_format(#{params.endTime},'%Y%m%d')
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="selectJobLogAll" resultMap="SysJobLogResult">
+        <include refid="selectJobLogVo"/>
+    </select>
+
+    <select id="selectJobLogById" parameterType="String" resultMap="SysJobLogResult">
+        <include refid="selectJobLogVo"/>
+        where job_log_id = #{jobLogId}
+    </select>
+
+    <select id="selectJobLogByIdCount" parameterType="String" resultType="int">
+        select count(1) from sys_job_log
+        where job_log_id = #{jobLogId}
+    </select>
+
+    <delete id="deleteJobLogById" parameterType="String">
+        delete from sys_job_log where job_log_id = #{jobLogId}
+    </delete>
+
+    <delete id="deleteJobLogByIds" parameterType="String">
+        delete from sys_job_log where job_log_id in
+        <foreach collection="array" item="jobLogId" open="(" separator="," close=")">
+            #{jobLogId}
+        </foreach>
+    </delete>
+
+    <update id="cleanJobLog">
+        delete from sys_job_log where batch_date = #{batchDate}
+    </update>
+
+    <select id="selectJobIdBatchDate" resultMap="SysJobLogResult">
+        SELECT *
+        FROM sys_job_log
+        WHERE job_id = #{jobId}
+        AND batch_date = #{batchDate}
+        AND run_mode = #{runMode}
+        ORDER BY create_time DESC
+        LIMIT 1
+    </select>
+
+    <insert id="insertJobLog" parameterType="SysJobLog">
+        insert into sys_job_log(
+        <if test="jobLogId != null and jobLogId != ''">job_log_id,</if>
+        <if test="jobId != null and jobId != ''">job_id,</if>
+        <if test="jobName != null and jobName != ''">job_name,</if>
+        <if test="jobGroup != null and jobGroup != ''">job_group,</if>
+        <if test="invokeTarget != null and invokeTarget != ''">invoke_target,</if>
+        <if test="jobMessage != null and jobMessage != ''">job_message,</if>
+        <if test="status != null and status != ''">status,</if>
+        <if test="exceptionInfo != null and exceptionInfo != ''">exception_info,</if>
+        <if test="batchDate != null and batchDate != ''">batch_date,</if>
+        <if test="dependentId != null and dependentId != ''">dependent_id,</if>
+        start_time,
+        stop_time,
+        run_time,
+        run_mode,
+        create_time
+        )values(
+        <if test="jobLogId != null and jobLogId != ''">#{jobLogId},</if>
+        <if test="jobId != null and jobId != ''">#{jobId},</if>
+        <if test="jobName != null and jobName != ''">#{jobName},</if>
+        <if test="jobGroup != null and jobGroup != ''">#{jobGroup},</if>
+        <if test="invokeTarget != null and invokeTarget != ''">#{invokeTarget},</if>
+        <if test="jobMessage != null and jobMessage != ''">#{jobMessage},</if>
+        <if test="status != null and status != ''">#{status},</if>
+        <if test="exceptionInfo != null and exceptionInfo != ''">#{exceptionInfo},</if>
+        <if test="batchDate != null and batchDate != ''">#{batchDate},</if>
+        <if test="dependentId != null and dependentId != ''">#{dependentId},</if>
+        #{startTime},
+        #{stopTime},
+        #{runTime},
+        #{runMode},
+        sysdate()
+        )
+    </insert>
+
+    <insert id="updateJobLog" parameterType="SysJobLog">
+        update sys_job_log
+        <set>
+            <if test="jobId != null and jobId != ''">job_id = #{jobId},</if>
+            <if test="jobName != null and jobName != ''">job_name = #{jobName},</if>
+            <if test="jobGroup != null and jobGroup != ''">job_group = #{jobGroup},</if>
+            <if test="invokeTarget != null and invokeTarget != ''">invoke_target = #{invokeTarget},</if>
+            <if test="jobMessage != null and jobMessage != ''">job_message = #{jobMessage},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="exceptionInfo != null and exceptionInfo != ''">exception_info = #{exceptionInfo},</if>
+            <if test="batchDate != null and batchDate != ''">batch_date = #{batchDate},</if>
+            <if test="dependentId != null and dependentId != ''">dependent_id = #{dependentId},</if>
+            start_time = #{startTime},
+            stop_time=#{stopTime},
+            run_time=#{runTime},
+            run_mode=#{runMode},
+            create_time = sysdate()
+        </set>
+        <where>
+            job_log_id = #{jobLogId}
+        </where>
+    </insert>
+
+</mapper> 

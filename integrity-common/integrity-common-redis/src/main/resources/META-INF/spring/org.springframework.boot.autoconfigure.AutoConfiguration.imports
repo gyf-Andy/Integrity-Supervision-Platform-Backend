@@ -1,0 +1,3 @@
+com.integrity.common.redis.configure.RedisConfig
+com.integrity.common.redis.service.RedisService
+com.integrity.common.redis.service.IdGeneratorService

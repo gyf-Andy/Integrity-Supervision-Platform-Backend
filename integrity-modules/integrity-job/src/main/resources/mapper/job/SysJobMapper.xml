@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.integrity.job.mapper.SysJobMapper">
+
+    <resultMap type="SysJobVo" id="SysJobResult">
+        <id property="jobId" column="job_id"/>
+        <result property="jobName" column="job_name"/>
+        <result property="jobGroup" column="job_group"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="parentName" column="parent_name"/>
+        <result property="batchType" column="batch_type"/>
+        <result property="ifDependent" column="if_dependent"/>
+        <result property="invokeTarget" column="invoke_target"/>
+        <result property="cronExpression" column="cron_expression"/>
+        <result property="exceptionRetryCount" column="exception_retry_count"/>
+        <result property="exceptionWaitSecond" column="exception_wait_second"/>
+        <result property="actuatorType" column="actuator_type"/>
+        <result property="status" column="status"/>
+        <result property="orderNum" column="order_num"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+        <result property="jobType" column="job_type"/>
+    </resultMap>
+
+    <sql id="selectJobVo">
+        select
+        job_id,job_name,job_group,parent_id,parent_name,batch_type,if_dependent,invoke_target,cron_expression,exception_retry_count,exception_wait_second,actuator_type,status,order_num,create_by,create_time,update_by,update_time,remark,job_type
+        from sys_job
+    </sql>
+
+    <select id="selectJobList" parameterType="SysJobVo" resultMap="SysJobResult">
+        <include refid="selectJobVo"/>
+        <where>
+            <if test="jobName != null and jobName != ''">
+                AND job_name like concat('%', #{jobName}, '%')
+            </if>
+            <if test="jobGroup != null and jobGroup != ''">
+                AND job_group = #{jobGroup}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+            <if test="invokeTarget != null and invokeTarget != ''">
+                AND invoke_target like concat('%', #{invokeTarget}, '%')
+            </if>
+            <if test="jobId != null and jobId != ''">
+                and jobId in
+                <foreach collection="jobId.split(',')" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="ifDependent != null and ifDependent != ''">
+                and if_dependent = #{ifDependent} and batch_type not in ('SECOND','HOUR' ,'MINUTE')
+            </if>
+        </where>
+        order by parent_id, order_num
+    </select>
+
+    <select id="checkJobNameUniqueNotCurrent" parameterType="SysJobVo" resultType="int">
+        select
+        count(1)
+        from sys_job sj
+        <where>
+            1 = 1
+            <if test="jobId != null and jobId != ''">
+                and job_id &lt;&gt; #{jobId}
+            </if>
+            <if test="jobName != null and jobName != ''">
+                and job_name = #{jobName}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectJobListIdStr" resultMap="SysJobResult">
+        SELECT
+        job_id,
+        job_name,
+        job_group,
+        parent_id,
+        parent_name,
+        batch_type,
+        if_dependent,
+        invoke_target,
+        cron_expression,
+        exception_retry_count,
+        exception_wait_second,
+        actuator_type,
+        status,
+        order_num,
+        create_by,
+        create_time,
+        update_by,
+        update_time,
+        remark,
+        job_type
+        FROM
+        sys_job sj
+        <where>
+            job_id in
+            <foreach collection="jobIds.split(',')" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </where>
+    </select>
+
+    <select id="selectJobAll" resultMap="SysJobResult">
+        <include refid="selectJobVo"/>
+    </select>
+
+    <select id="selectJobById" parameterType="String" resultMap="SysJobResult">
+        select
+        job_id,job_name,job_group,parent_id,parent_name,batch_type,if_dependent,invoke_target,cron_expression,exception_retry_count,exception_wait_second,actuator_type,status,order_num,create_by,create_time,update_by,update_time,remark,job_type
+        ,
+        case when job_group = 'TASK_GROUP' then (
+        SELECT
+        CONCAT('[', GROUP_CONCAT(DISTINCT inner_concat ORDER BY batch_index SEPARATOR '],['), ']') AS combined_values
+        FROM (
+        SELECT
+        sjd.job_id,
+        batch_index,
+        GROUP_CONCAT(dependent_id ORDER BY dependent_id SEPARATOR ',') AS inner_concat
+        FROM
+        sys_job_dependent sjd
+        GROUP BY
+        sjd.job_id, batch_index
+        ) AS subquery
+        where subquery.job_id = sj.job_id
+        group by subquery.job_id
+        ) else null end as dependentIds
+        from sys_job sj
+        where sj.job_id = #{jobId}
+    </select>
+
+    <delete id="deleteJobById" parameterType="String">
+        delete from sys_job where job_id = #{jobId}
+    </delete>
+
+    <delete id="deleteJobByIds" parameterType="String">
+        delete from sys_job where job_id in
+        <foreach collection="array" item="jobId" open="(" separator="," close=")">
+            #{jobId}
+        </foreach>
+    </delete>
+
+    <update id="updateJob" parameterType="SysJobVo">
+        update sys_job
+        <set>
+            <if test="jobName != null and jobName != ''">job_name = #{jobName},</if>
+            <if test="jobGroup != null and jobGroup != ''">job_group = #{jobGroup},</if>
+            <if test="parentId != null and parentId != ''">parent_id = #{parentId},</if>
+            <if test="parentName != null and parentName != ''">parent_name = #{parentName},</if>
+            <if test="batchType != null and batchType != ''">batch_type = #{batchType},</if>
+            <if test="ifDependent != null and ifDependent != ''">if_dependent = #{ifDependent},</if>
+            <if test="invokeTarget != null and invokeTarget != ''">invoke_target = #{invokeTarget},</if>
+            <if test="cronExpression != null and cronExpression != ''">cron_expression = #{cronExpression},</if>
+            <if test="exceptionRetryCount != null and exceptionRetryCount != 0">
+                exception_retry_count = #{exceptionRetryCount},
+            </if>
+            <if test="exceptionWaitSecond != null and exceptionWaitSecond != 0">
+                exception_wait_second=#{exceptionWaitSecond},
+            </if>
+            <if test="actuatorType != null and actuatorType != ''">actuator_type = #{actuatorType},</if>
+            <if test="status !=null">status = #{status},</if>
+            <if test="orderNum !=null">order_num = #{orderNum},</if>
+            <if test="remark != null and remark != ''">remark = #{remark},</if>
+            <if test="jobType != null and jobType != ''">job_type = #{jobType},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            update_time = sysdate()
+        </set>
+        where job_id = #{jobId}
+    </update>
+
+    <insert id="insertJob" parameterType="SysJobVo" keyProperty="jobId">
+        insert into sys_job(
+        <if test="jobId != null and jobId != ''">job_id,</if>
+        <if test="jobName != null and jobName != ''">job_name,</if>
+        <if test="jobGroup != null and jobGroup != ''">job_group,</if>
+        <if test="parentId != null and parentId != ''">parent_id,</if>
+        <if test="parentName != null and parentName != ''">parent_name,</if>
+        <if test="batchType != null and batchType != ''">batch_type,</if>
+        <if test="ifDependent != null and ifDependent != ''">if_dependent,</if>
+        <if test="invokeTarget != null and invokeTarget != ''">invoke_target,</if>
+        <if test="cronExpression != null and cronExpression != ''">cron_expression,</if>
+        <if test="exceptionRetryCount != null and exceptionRetryCount != ''">exception_retry_count,</if>
+        <if test="exceptionWaitSecond != null and exceptionWaitSecond != ''">exception_wait_second,</if>
+        <if test="orderNum !=null">order_num,</if>
+        <if test="actuatorType != null and actuatorType != ''">actuator_type,</if>
+        <if test="status != null and status != ''">status,</if>
+        <if test="remark != null and remark != ''">remark,</if>
+        <if test="jobType != null and jobType != ''">job_type,</if>
+        <if test="createBy != null and createBy != ''">create_by,</if>
+        create_time
+        )values(
+        <if test="jobId != null and jobId != ''">#{jobId},</if>
+        <if test="jobName != null and jobName != ''">#{jobName},</if>
+        <if test="jobGroup != null and jobGroup != ''">#{jobGroup},</if>
+        <if test="parentId != null and parentId != ''">#{parentId},</if>
+        <if test="parentName != null and parentName != ''">#{parentName},</if>
+        <if test="batchType != null and batchType != ''">#{batchType},</if>
+        <if test="ifDependent != null and ifDependent != ''">#{ifDependent},</if>
+        <if test="invokeTarget != null and invokeTarget != ''">#{invokeTarget},</if>
+        <if test="cronExpression != null and cronExpression != ''">#{cronExpression},</if>
+        <if test="exceptionRetryCount != null and exceptionRetryCount != 0">#{exceptionRetryCount},</if>
+        <if test="exceptionWaitSecond != null and exceptionWaitSecond != 0">#{exceptionWaitSecond},</if>
+        <if test="orderNum != null">#{orderNum},</if>
+        <if test="actuatorType != null and actuatorType != ''">#{actuatorType},</if>
+        <if test="status != null and status != ''">#{status},</if>
+        <if test="remark != null and remark != ''">#{remark},</if>
+        <if test="jobType != null and jobType != ''">#{jobType},</if>
+        <if test="createBy != null and createBy != ''">#{createBy},</if>
+        sysdate()
+        )
+    </insert>
+
+    <select id="callStoredProcedure" statementType="CALLABLE">
+        {
+        CALL ${procedureCall}(
+        #{params.param1, mode=IN, jdbcType=VARCHAR},
+        #{params.batchDate, mode=IN, jdbcType=VARCHAR},
+        #{params.output_code, mode=OUT, jdbcType=INTEGER},
+        #{params.output_message, mode=OUT, jdbcType=VARCHAR}
+        )
+        }
+    </select>
+
+    <select id="dictData" resultType="string">
+        SELECT dict_value FROM sys_dict_data where dict_type = 'sys_job_group' and dict_label = #{dictLabel}
+    </select>
+
+    <insert id="insertSysJob">
+        insert into sys_job(
+        <if test="sysJob.jobId != null and sysJob.jobId != ''">job_id,</if>
+        <if test="sysJob.jobName != null and sysJob.jobName != ''">job_name,</if>
+        <if test="sysJob.jobGroup != null and sysJob.jobGroup != ''">job_group,</if>
+        <if test="sysJob.parentId != null and sysJob.parentId != ''">parent_id,</if>
+        <if test="sysJob.parentName != null and sysJob.parentName != ''">parent_name,</if>
+        <if test="sysJob.jobType != null and sysJob.jobType != ''">job_type,</if>
+        <if test="sysJob.orderNum != null">order_num,</if>
+        <if test="createBy != null and createBy != ''">create_by,</if>
+        create_time
+        )values(
+        <if test="sysJob.jobId != null and sysJob.jobId != ''">#{sysJob.jobId},</if>
+        <if test="sysJob.jobName != null and sysJob.jobName != ''">#{sysJob.jobName},</if>
+        <if test="sysJob.jobGroup != null and sysJob.jobGroup != ''">#{sysJob.jobGroup},</if>
+        <if test="sysJob.parentId != null and sysJob.parentId != ''">#{sysJob.parentId},</if>
+        <if test="sysJob.parentName != null and sysJob.parentName != ''">#{sysJob.parentName},</if>
+        <if test="sysJob.jobType != null and sysJob.jobType != ''">#{sysJob.jobType},</if>
+        <if test="sysJob.orderNum != null">#{sysJob.orderNum},</if>
+        <if test="createBy != null and createBy != ''">#{createBy},</if>
+        sysdate()
+        )
+    </insert>
+
+    <select id="checkJobGroup" resultType="int">
+        SELECT count(1) FROM sys_job where job_name = #{jobName} and job_group = #{jobGroup}
+    </select>
+
+    <select id="checkJobIdSize" resultType="int">
+        SELECT count(1) FROM sys_job
+        <where>
+            job_id in
+            <foreach collection="jobIds" item="jobId" open="(" separator="," close=")">
+                #{jobId}
+            </foreach>
+        </where>
+    </select>
+
+    <select id="selectJobListByUserId" parameterType="SysJobVo">
+        select distinct
+        job_id,job_name,job_group,parent_id,parent_name,batch_type,if_dependent,invoke_target,cron_expression,exception_retry_count,exception_wait_second,actuator_type,status,order_num,create_by,create_time,update_by,update_time,remark,job_type
+        from sys_job m
+        where m.create_by = #{params.userId}
+        <if test="jobName != null and jobName != ''">
+            AND m.job_name like concat('%', #{jobName}, '%')
+        </if>
+        <if test="status != null and status != ''">
+            AND m.status = #{status}
+        </if>
+        order by m.parent_id, m.order_num
+    </select>
+</mapper> 

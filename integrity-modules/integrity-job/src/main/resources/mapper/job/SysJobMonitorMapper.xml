@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.integrity.job.mapper.SysJobMonitorMapper">
+
+    <resultMap type="SysJobMonitor" id="SysJobMonitorResult">
+        <id property="jobMonitorId" column="job_monitor_id"/>
+        <result property="jobId" column="job_id"/>
+        <result property="dependentId" column="dependent_id"/>
+        <result property="parentName" column="parent_name"/>
+        <result property="batchDate" column="batch_date"/>
+        <result property="batchType" column="batch_type"/>
+        <result property="status" column="status"/>
+        <result property="invokeTarget" column="invoke_target"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <sql id="selectSysJobQueue">
+        select job_monitor_id, job_id, dependent_id, parent_name, batch_date, batch_type, create_time, invoke_target,
+        status
+        from
+        sys_job_monitor
+    </sql>
+
+    <insert id="insert" parameterType="SysJobMonitor">
+        insert into sys_job_monitor(
+        job_monitor_id, job_id, dependent_id, parent_name, batch_date, batch_type, create_time, invoke_target, status
+        )values(#{jobMonitorId},#{jobId},#{dependentId},#{parentName},#{batchDate},#{batchType},#{createTime},#{invokeTarget},#{status})
+    </insert>
+
+    <update id="update">
+        update sys_job_monitor
+        <set>
+            status = #{status}
+        </set>
+        <where>
+            1 = 1
+            <if test="jobMonitorId != null and jobMonitorId != ''">
+                and job_monitor_id = #{jobMonitorId}
+            </if>
+            and job_id = #{jobId}
+            <if test="parentName != null and parentName != ''">
+                and parent_name = #{parentName}
+            </if>
+            and batch_date = #{batchDate}
+            and batch_type = #{batchType}
+        </where>
+    </update>
+
+    <select id="selectList" resultMap="SysJobMonitorResult">
+        <include refid="selectSysJobQueue"/>
+        <where>
+            1 = 1
+            <if test="jobId != null and jobId != ''">
+                and job_id = #{jobId}
+            </if>
+            <if test="batchDate != null and batchDate != ''">
+                and batch_date = #{batchDate}
+            </if>
+            <if test="batchType != null and batchType != ''">
+                and batch_type = #{batchType}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectWaitNotExecuteStatus">
+        select count(1) from sys_job_monitor
+        <where>
+            batch_date = #{batchDate}
+            and parent_name = #{detectTaskLabel}
+            and batch_type = 'DAY'
+            and status in (
+            <foreach collection="status" item="item" separator=",">
+                #{item}
+            </foreach>
+            )
+        </where>
+    </select>
+
+    <delete id="cleanDependent">
+        delete from sys_job_monitor where dependent_id = #{jobId}
+    </delete>
+
+    <select id="selectDetectTaskLabelList" resultMap="SysJobMonitorResult">
+        <include refid="selectSysJobQueue"/>
+        <where>
+            batch_date = #{batchDate}
+            and parent_name = #{detectTaskLabel}
+            and batch_type = 'DAY'
+            and status = #{status}
+        </where>
+    </select>
+
+    <select id="aboutToBeAdjustMonitors" resultMap="SysJobMonitorResult">
+        <include refid="selectSysJobQueue"/>
+        <where>
+            batch_date = #{batchDate}
+            and parent_name = #{detectTaskLabel}
+            and batch_type = 'DAY'
+            and status = '0'
+        </where>
+        ORDER BY create_time DESC
+        LIMIT #{aboutToBeAdjustCount}
+    </select>
+</mapper> 

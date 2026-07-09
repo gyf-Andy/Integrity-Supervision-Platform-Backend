@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <springProfile name="dev,local">
+        <!-- 控制台输出 -->
+        <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+                <pattern>
+                    %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level[%logger][%method,%line] : %msg%n
+                </pattern>
+            </encoder>
+        </appender>
+
+        <logger name="com.integrity" level="INFO"/>
+        <logger name="org.springframework" level="INFO"/>
+        <logger name="com.integrity.job.mapper" level="debug"/>
+        <!-- 根日志配置 -->
+        <root level="info">
+            <appender-ref ref="STDOUT"/>
+        </root>
+    </springProfile>
+
+    <springProperty scope="context" name="springAppName" source="spring.application.name"/>
+    <springProperty scope="context" name="currentEnv" defaultValue="local" source="spring.profiles.active"/>
+
+    <springProfile name="test,sit,uat,prod,performance">
+        <property name="LOG_HOME" value="/home/cloud/logs"/>
+        <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <!--日志文件输出的文件名-->
+                <FileNamePattern>${LOG_HOME}/${springAppName}-${currentEnv}/%d{yyyyMMdd}.%i.log</FileNamePattern>
+                <!--日志文件保留数量-->
+                <MaxHistory>3</MaxHistory>
+                <timeBasedFileNamingAndTriggeringPolicy
+                        class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    <maxFileSize>50MB</maxFileSize>
+                </timeBasedFileNamingAndTriggeringPolicy>
+            </rollingPolicy>
+            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+                <pattern>
+                    %d{yyyy-MM-dd HH:mm:ss.SSS} %X{traceId:-} %X{spanId:-} [%thread] [%-5level %logger] ->
+                    [%method,%line] :
+                    %msg%n
+                </pattern>
+                <charset>UTF-8</charset>
+            </encoder>
+        </appender>
+
+        <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <!--日志文件输出的文件名-->
+                <FileNamePattern>${LOG_HOME}/${springAppName}-${currentEnv}/error/%d{yyyyMMdd}.%i.log</FileNamePattern>
+                <!--日志文件保留数量-->
+                <MaxHistory>3</MaxHistory>
+                <timeBasedFileNamingAndTriggeringPolicy
+                        class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    <maxFileSize>50MB</maxFileSize>
+                </timeBasedFileNamingAndTriggeringPolicy>
+            </rollingPolicy>
+            <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+                <pattern>
+                    %d{yyyy-MM-dd HH:mm:ss.SSS} %X{traceId:-} %X{spanId:-} [%thread] [%-5level %logger] ->
+                    [%method,%line] :
+                    %msg%n
+                </pattern>
+                <charset>UTF-8</charset>
+            </encoder>
+        </appender>
+
+        <appender name="ASYNC-FILE" class="ch.qos.logback.classic.AsyncAppender">
+            <discardingThreshold>0</discardingThreshold>
+            <queueSize>512</queueSize>
+            <appender-ref ref="FILE"/>
+        </appender>
+
+        <appender name="ASYNC-ERROR" class="ch.qos.logback.classic.AsyncAppender">
+            <queueSize>512</queueSize>
+            <appender-ref ref="ERROR"/>
+        </appender>
+
+        <springProfile name="sit,performance">
+            <logger name="com.integrity" level="INFO"/>
+            <logger name="org.springframework" level="INFO"/>
+            <logger name="com.integrity.job.mapper" level="debug"/>
+
+            <!-- 日志输出级别 -->
+            <root level="INFO">
+                <appender-ref ref="ASYNC-FILE"/>
+                <appender-ref ref="ASYNC-ERROR"/>
+            </root>
+        </springProfile>
+
+        <springProfile name="performance">
+            <logger name="com.integrity" level="ERROR"/>
+            <logger name="org.springframework" level="ERROR"/>
+            <!-- 日志输出级别 -->
+            <root level="ERROR">
+                <appender-ref ref="ASYNC-FILE"/>
+                <appender-ref ref="ASYNC-ERROR"/>
+            </root>
+        </springProfile>
+
+        <springProfile name="uat">
+            <logger name="com.integrity" level="INFO"/>
+            <logger name="org.springframework" level="INFO"/>
+            <logger name="com.integrity.job.mapper" level="debug"/>
+
+            <!-- 日志输出级别 -->
+            <root level="INFO">
+                <appender-ref ref="ASYNC-FILE"/>
+                <appender-ref ref="ASYNC-ERROR"/>
+            </root>
+        </springProfile>
+
+        <springProfile name="prod">
+            <logger name="com.integrity" level="INFO"/>
+            <logger name="org.springframework" level="INFO"/>
+            <logger name="com.integrity.job.mapper" level="debug"/>
+
+            <!-- 日志输出级别 -->
+            <root level="INFO">
+                <appender-ref ref="ASYNC-FILE"/>
+                <appender-ref ref="ASYNC-ERROR"/>
+            </root>
+        </springProfile>
+    </springProfile>
+</configuration>

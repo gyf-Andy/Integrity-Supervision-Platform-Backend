@@ -1,0 +1,4 @@
+com.integrity.system.api.factory.RemoteUserFallbackFactory
+com.integrity.system.api.factory.RemoteLogFallbackFactory
+com.integrity.system.api.factory.RemoteFileFallbackFactory
+com.integrity.system.api.factory.RemoteFlowFallbackFactory

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.integrity</groupId>
+        <artifactId>integrity-supervision-platform</artifactId>
+        <version>3.6.5</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <modules>
+        <module>integrity-common-log</module>
+        <module>integrity-common-core</module>
+        <module>integrity-common-redis</module>
+        <module>integrity-common-seata</module>
+        <module>integrity-common-swagger</module>
+        <module>integrity-common-security</module>
+        <module>integrity-common-sensitive</module>
+        <module>integrity-common-datascope</module>
+        <module>integrity-common-datasource</module>
+        <module>integrity-common-encrypt</module>
+    </modules>
+
+    <artifactId>integrity-common</artifactId>
+    <packaging>pom</packaging>
+
+    <description>
+        Integrity-Supervision-Platform 通用模块
+    </description>
+
+</project>
+

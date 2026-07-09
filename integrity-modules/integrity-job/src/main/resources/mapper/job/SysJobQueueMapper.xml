@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.integrity.job.mapper.SysJobQueueMapper">
+
+    <resultMap type="SysJobQueue" id="SysJobQueueResult">
+        <result property="jobId" column="job_id"/>
+        <result property="batchDate" column="batch_date"/>
+        <result property="dependentId" column="dependent_id"/>
+        <result property="status" column="status"/>
+        <result property="batchIndex" column="batch_index"/>
+    </resultMap>
+
+    <sql id="selectSysJobQueue">
+        select job_id, batch_date, dependent_id, status, batch_index
+        from sys_job_queue
+    </sql>
+
+    <insert id="insertBatch" parameterType="SysJobQueue">
+        insert into sys_job_queue(
+        job_id,
+        batch_date,
+        dependent_id,
+        status,
+        batch_index
+        )values
+        <foreach collection="jobQueues" item="jobQueue" separator=",">
+            (
+            #{jobQueue.jobId},
+            #{jobQueue.batchDate},
+            #{jobQueue.dependentId},
+            #{jobQueue.status},
+            #{jobQueue.batchIndex}
+            )
+        </foreach>
+    </insert>
+
+    <select id="selectList" resultMap="SysJobQueueResult">
+        <include refid="selectSysJobQueue"/>
+        <where>
+            1 = 1
+            <if test="jobId != null and jobId != ''">
+                and job_id = #{jobId}
+            </if>
+            <if test="batchDate != null and batchDate != ''">
+                and batch_date = #{batchDate}
+            </if>
+            <if test="dependentId != null and dependentId != ''">
+                and dependent_id = #{dependentId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectDependentStatus" resultMap="SysJobQueueResult">
+        <include refid="selectSysJobQueue"/>
+        <where>
+            dependent_id = #{dependentId}
+            and batch_date = #{batchDate}
+            <!--and batch_index = #{batchIndex}-->
+        </where>
+    </select>
+
+    <update id="updateStatus">
+        update sys_job_queue
+        <set>
+            status = #{status}
+        </set>
+        <where>
+            dependent_id = #{dependentId}
+            and batch_date = #{batchDate}
+            <!--and batch_index = #{batchIndex}-->
+        </where>
+    </update>
+
+    <select id="selectJobStatus" resultMap="SysJobQueueResult">
+        <include refid="selectSysJobQueue"/>
+        <where>
+            job_id = #{jobId}
+            and batch_date = #{batchDate}
+            <!--and batch_index = #{batchIndex}-->
+            and status = '3'
+        </where>
+    </select>
+</mapper> 

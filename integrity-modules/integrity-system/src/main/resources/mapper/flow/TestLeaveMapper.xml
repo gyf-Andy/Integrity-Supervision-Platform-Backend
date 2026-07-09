@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.integrity.system.mapper.TestLeaveMapper">
+
+    <resultMap type="TestLeave" id="TestLeaveResult">
+        <result property="id" column="id"/>
+        <result property="type" column="type"/>
+        <result property="reason" column="reason"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="day" column="day"/>
+        <result property="instanceId" column="instance_id"/>
+        <result property="nodeCode" column="node_code"/>
+        <result property="nodeName" column="node_name"/>
+        <result property="nodeType" column="node_type"/>
+        <result property="flowStatus" column="flow_status"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="delFlag" column="del_flag"/>
+    </resultMap>
+
+    <sql id="selectTestLeaveVo">
+        select id,
+               type,
+               reason,
+               start_time,
+               end_time, day, instance_id, node_code, node_name, node_type, flow_status, create_by, create_time, update_by, update_time, del_flag
+        from test_leave
+    </sql>
+
+    <select id="selectTestLeaveList" parameterType="TestLeave" resultMap="TestLeaveResult">
+        <include refid="selectTestLeaveVo"/>
+        <where>
+            <if test="type != null ">and type = #{type}</if>
+            <if test="day != null ">and day = #{day}</if>
+            <if test="flowStatus != null  and flowStatus != ''">and flow_status = #{flowStatus}</if>
+            <if test="createBy != null  and createBy != ''">and create_by = #{createBy}</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''">
+                and create_time between #{params.beginCreateTime} and #{params.endCreateTime}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="selectTestLeaveById" parameterType="String" resultMap="TestLeaveResult">
+        <include refid="selectTestLeaveVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectTestLeaveByIds" parameterType="String" resultMap="TestLeaveResult">
+        <include refid="selectTestLeaveVo"/>
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <insert id="insertTestLeave" parameterType="TestLeave">
+        insert into test_leave
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="type != null">type,</if>
+            <if test="reason != null and reason != ''">reason,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="day != null">day,</if>
+            <if test="instanceId != null">instance_id,</if>
+            <if test="nodeCode != null">node_code,</if>
+            <if test="nodeName != null">node_name,</if>
+            <if test="nodeType != null and nodeType != ''">node_type,</if>
+            <if test="flowStatus != null and flowStatus != ''">flow_status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="type != null">#{type},</if>
+            <if test="reason != null and reason != ''">#{reason},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="day != null">#{day},</if>
+            <if test="instanceId != null">#{instanceId},</if>
+            <if test="nodeCode != null">#{nodeCode},</if>
+            <if test="nodeName != null">#{nodeName},</if>
+            <if test="nodeType != null and nodeType != ''">#{nodeType},</if>
+            <if test="flowStatus != null and flowStatus != ''">#{flowStatus},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTestLeave" parameterType="TestLeave">
+        update test_leave
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="type != null">type = #{type},</if>
+            <if test="reason != null and reason != ''">reason = #{reason},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="day != null">day = #{day},</if>
+            <if test="instanceId != null">instance_id = #{instanceId},</if>
+            <if test="nodeCode != null">node_code = #{nodeCode},</if>
+            <if test="nodeName != null">node_name = #{nodeName},</if>
+            <if test="nodeType != null and nodeType != ''">node_type = #{nodeType},</if>
+            <if test="flowStatus != null and flowStatus != ''">flow_status = #{flowStatus},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTestLeaveById" parameterType="String">
+        delete
+        from test_leave
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteTestLeaveByIds" parameterType="String">
+        delete from test_leave where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

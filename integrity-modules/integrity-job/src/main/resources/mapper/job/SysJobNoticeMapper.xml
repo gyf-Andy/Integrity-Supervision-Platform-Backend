@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.integrity.job.mapper.SysJobNoticeMapper">
+
+    <resultMap type="SysJobNotice" id="SysJobNoticeResult">
+        <result property="jobNoticeId" column="job_notice_id"/>
+        <result property="jobId" column="job_id"/>
+        <result property="jobName" column="job_name"/>
+        <result property="noticeContent" column="notice_content"/>
+        <result property="noticeTarget" column="notice_target"/>
+        <result property="createTime" column="create_time"/>
+        <result property="batchDate" column="batch_date"/>
+        <result property="ifHandle" column="if_handle"/>
+    </resultMap>
+
+    <sql id="selectSysJobNotice">
+        select job_notice_id, job_id, job_name, notice_content, notice_target, create_time, batch_date, if_handle
+        from sys_job_notice
+    </sql>
+
+    <insert id="insert" parameterType="SysJobNotice">
+        insert into sys_job_notice(
+        job_notice_id, job_id, job_name, notice_content, notice_target, batch_date, if_handle, create_time
+        )values
+        <foreach collection="jobNotices" item="jobNotice" separator=",">
+            (
+            #{jobNotice.jobNoticeId}, #{jobNotice.jobId}, #{jobNotice.jobName}, #{jobNotice.noticeContent},
+            #{jobNotice.noticeTarget}, #{jobNotice.batchDate}, #{jobNotice.ifHandle},
+            sysdate()
+            )
+        </foreach>
+    </insert>
+
+    <select id="selectList" parameterType="SysJobNotice" resultMap="SysJobNoticeResult">
+        <include refid="selectSysJobNotice"/>
+        <where>
+            1 = 1
+            <if test="jobId != null and jobId != ''">
+                and job_id = #{jobId}
+            </if>
+            <if test="jobName != null and jobName != ''">
+                AND job_name like concat('%', #{jobName}, '%')
+            </if>
+            <if test="ifHandle != null and ifHandle != ''">
+                AND if_handle = #{ifHandle}
+            </if>
+        </where>
+    </select>
+
+    <update id="update" parameterType="SysJobNotice">
+        update sys_job_notice
+        <set>
+            if_handle = #{ifHandle}
+        </set>
+        <where>
+            job_notice_id = #{jobNoticeId}
+            and job_id = #{jobId}
+        </where>
+    </update>
+</mapper> 

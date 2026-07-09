@@ -1,0 +1,2 @@
+com.integrity.common.log.service.AsyncLogService
+com.integrity.common.log.aspect.LogAspect
