@@ -1,0 +1,12 @@
+{
+  "id": "configure-local-nacos-dameng",
+  "domain": "backend",
+  "currentPhase": "completed",
+  "title": "将本机 Nacos application.properties 数据库配置切换为达梦",
+  "branch": "master",
+  "nextAction": "归档",
+  "status": "completed",
+  "complexity": "S",
+  "createdAt": "2026-07-10T12:07:02Z",
+  "risk": "high"
+}
