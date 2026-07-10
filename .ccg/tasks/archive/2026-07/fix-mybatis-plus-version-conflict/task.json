@@ -1,0 +1,12 @@
+{
+  "id": "fix-mybatis-plus-version-conflict",
+  "title": "修复 mybatis-plus 3.5.17 与传递依赖的旧版 mybatis(3.5.14/15) 版本冲突导致启动 NoSuchMethodError",
+  "status": "completed",
+  "complexity": "M",
+  "risk": "high",
+  "domain": "backend",
+  "currentPhase": "completed",
+  "nextAction": "归档",
+  "createdAt": "2026-07-10T22:25:00Z",
+  "branch": "master"
+}
