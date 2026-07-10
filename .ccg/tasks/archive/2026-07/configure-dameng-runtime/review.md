@@ -23,6 +23,14 @@
   - added Dameng `IDENTITY_COLUMN` detection for generator metadata
   - made date filters tolerate `YYYY-MM-DD HH:mm:ss` inputs via `SUBSTR(..., 1, 10)`
 
+### Re-review
+
+- Antigravity re-review was attempted but failed because `agy` is not available in PATH.
+- Claude re-review reported no remaining Critical issues.
+- Remaining Warning items were addressed:
+  - outer `LISTAGG` now uses `DISTINCT`
+  - date comparison parameters now use `SUBSTR(..., 1, 10)` normalization
+
 ### Residual Notes
 
 - Nacos running on Dameng still requires a Nacos datasource plugin and Dameng JDBC driver in `docker/nacos/plugins/`.
@@ -33,3 +41,5 @@
 `mvn -pl integrity-modules/integrity-system,integrity-modules/integrity-job,integrity-modules/integrity-gen,integrity-modules/integrity-flow -am test -DskipITs`
 
 Result: `BUILD SUCCESS`
+
+Final verification after re-review fixes: `BUILD SUCCESS`
