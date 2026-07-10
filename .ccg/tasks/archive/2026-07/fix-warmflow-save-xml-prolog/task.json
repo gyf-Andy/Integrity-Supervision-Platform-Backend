@@ -1,0 +1,12 @@
+{
+  "id": "fix-warmflow-save-xml-prolog",
+  "title": "修复 warm-flow save-xml 接口报 前言中不允许有内容 (XML prolog BOM/前导内容)",
+  "status": "completed",
+  "complexity": "M",
+  "risk": "medium",
+  "domain": "backend",
+  "currentPhase": "completed",
+  "nextAction": "归档",
+  "createdAt": "2026-07-10T22:50:00Z",
+  "branch": "master"
+}
