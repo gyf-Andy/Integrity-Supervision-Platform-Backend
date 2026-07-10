@@ -1,0 +1,12 @@
+{
+  "id": "fix-sysmenu-dameng-schema",
+  "title": "修复 SysMenu 查询在达梦下的报错(schema 与 Nacos 数据源未切达梦)",
+  "status": "completed",
+  "complexity": "M",
+  "risk": "high",
+  "domain": "backend",
+  "currentPhase": "completed",
+  "nextAction": "归档",
+  "createdAt": "2026-07-10T13:00:00Z",
+  "branch": "master"
+}
