@@ -1,0 +1,12 @@
+{
+  "id": "configure-dameng-runtime",
+  "title": "使用用户提供的达梦数据库连接信息配置系统运行",
+  "status": "completed",
+  "complexity": "M",
+  "risk": "high",
+  "domain": "backend",
+  "currentPhase": "completed",
+  "nextAction": "归档任务",
+  "createdAt": "2026-07-10T09:42:40Z",
+  "branch": "master"
+}

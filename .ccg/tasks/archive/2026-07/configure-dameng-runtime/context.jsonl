@@ -1,0 +1,9 @@
+{"path":"integrity-modules/integrity-system/src/main/resources/bootstrap.yml","reason":"system local dynamic datasource fallback"}
+{"path":"integrity-modules/integrity-gen/src/main/resources/bootstrap.yml","reason":"gen local datasource fallback"}
+{"path":"integrity-modules/integrity-job/src/main/resources/bootstrap.yml","reason":"job local datasource fallback"}
+{"path":"integrity-modules/integrity-flow/src/main/resources/bootstrap.yml","reason":"flow local datasource fallback"}
+{"path":"sql/integrity-config.sql","reason":"Nacos active config_info datasource records"}
+{"path":"docker/nacos/conf/application.properties","reason":"Nacos external database connection"}
+{"path":"docker/docker-compose.yml","reason":"Docker runtime database dependency and env vars"}
+{"path":"integrity-modules/*/src/main/resources/mapper/**/*.xml","reason":"Dameng SQL dialect compatibility"}
+{"path":"integrity-common/integrity-common-datascope/src/main/java/com/integrity/common/datascope/aspect/DataScopeAspect.java","reason":"data scope SQL fragment compatibility"}
