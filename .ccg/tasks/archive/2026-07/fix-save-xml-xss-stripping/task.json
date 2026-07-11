@@ -1,0 +1,12 @@
+{
+  "id": "fix-save-xml-xss-stripping",
+  "title": "修复 warm-flow save-xml 保存无效(gateway XssFilter 把 XML 当 HTML 剥光标签只剩文本)",
+  "status": "completed",
+  "complexity": "M",
+  "risk": "high",
+  "domain": "backend",
+  "currentPhase": "completed",
+  "nextAction": "归档",
+  "createdAt": "2026-07-11T09:30:00Z",
+  "branch": "master"
+}
