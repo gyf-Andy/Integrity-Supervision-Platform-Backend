@@ -42,19 +42,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectConfigVo"/>
         <where>
 			<if test="configName != null and configName != ''">
-				AND config_name like concat('%', #{configName}, '%')
+				AND config_name like '%' || #{configName} || '%'
 			</if>
 			<if test="configType != null and configType != ''">
 				AND config_type = #{configType}
 			</if>
 			<if test="configKey != null and configKey != ''">
-				AND config_key like concat('%', #{configKey}, '%')
+				AND config_key like '%' || #{configKey} || '%'
 			</if>
 			<if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
-				and date_format(create_time,'%Y%m%d') &gt;= date_format(#{params.beginTime},'%Y%m%d')
+				and TO_CHAR(create_time,'YYYY-MM-DD') &gt;= SUBSTR(#{params.beginTime}, 1, 10)
 			</if>
 			<if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
-				and date_format(create_time,'%Y%m%d') &lt;= date_format(#{params.endTime},'%Y%m%d')
+				and TO_CHAR(create_time,'YYYY-MM-DD') &lt;= SUBSTR(#{params.endTime}, 1, 10)
 			</if>
 		</where>
     </select>
@@ -66,7 +66,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <select id="checkConfigKeyUnique" parameterType="String" resultMap="SysConfigResult">
         <include refid="selectConfigVo"/>
-        where config_key = #{configKey} limit 1
+        where config_key = #{configKey}
+        FETCH FIRST 1 ROWS ONLY
     </select>
     
     <insert id="insertConfig" parameterType="SysConfig">
@@ -115,3 +116,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
     
 </mapper>
+
+
+

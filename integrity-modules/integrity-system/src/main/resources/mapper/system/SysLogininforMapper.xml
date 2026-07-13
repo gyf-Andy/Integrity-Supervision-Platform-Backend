@@ -22,13 +22,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		select info_id, user_name, ipaddr, status, msg, access_time from sys_login_info
 		<where>
 			<if test="ipaddr != null and ipaddr != ''">
-				AND ipaddr like concat('%', #{ipaddr}, '%')
+				AND ipaddr like '%' || #{ipaddr} || '%'
 			</if>
 			<if test="status != null and status != ''">
 				AND status = #{status}
 			</if>
 			<if test="userName != null and userName != ''">
-				AND user_name like concat('%', #{userName}, '%')
+				AND user_name like '%' || #{userName} || '%'
 			</if>
 			<if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
 				AND access_time &gt;= #{params.beginTime}
@@ -52,3 +52,5 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
     
 </mapper> 
+
+

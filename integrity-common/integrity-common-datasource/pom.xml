@@ -29,6 +29,17 @@
             <groupId>com.baomidou</groupId>
             <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
             <version>${dynamic-ds.version}</version>
+            <exclusions>
+                <!-- 与 mybatis-plus 3.5.17 自带的 mybatis 3.5.19 冲突，排除其传递的旧版 mybatis -->
+                <exclusion>
+                    <groupId>org.mybatis.spring.boot</groupId>
+                    <artifactId>mybatis-spring-boot-starter</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.mybatis</groupId>
+                    <artifactId>mybatis</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
     </dependencies>

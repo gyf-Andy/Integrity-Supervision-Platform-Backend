@@ -1,1 +1,2 @@
 com.integrity.common.core.utils.SpringUtils
+com.integrity.common.core.config.MybatisPlusConfig

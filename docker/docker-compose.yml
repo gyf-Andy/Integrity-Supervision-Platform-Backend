@@ -7,6 +7,12 @@ services:
       context: ./nacos
     environment:
       - MODE=standalone
+      - DM_HOST=${DM_HOST:-host.docker.internal}
+      - DM_PORT=${DM_PORT:-5236}
+      - DM_CONFIG_DATABASE=${DM_CONFIG_DATABASE:-INTEGRITY-CONFIG}
+      - DM_SCHEMA=${DM_DATABASE}
+      - DM_USERNAME=${DM_USERNAME:-SYSDBA}
+      - DM_PASSWORD=${DM_PASSWORD:-IntegritySupervision0}
     volumes:
       - ./nacos/logs/:/home/nacos/logs
       - ./nacos/conf/application.properties:/home/nacos/conf/application.properties
@@ -14,30 +20,6 @@ services:
       - "8848:8848"
       - "9848:9848"
       - "9849:9849"
-    depends_on:
-      - integrity-mysql
-  integrity-mysql:
-    container_name: integrity-mysql
-    image: mysql:5.7
-    build:
-      context: ./mysql
-    ports:
-      - "3306:3306"
-    volumes:
-      - ./mysql/conf:/etc/mysql/conf.d
-      - ./mysql/logs:/logs
-      - ./mysql/data:/var/lib/mysql
-    command: [
-          'mysqld',
-          '--innodb-buffer-pool-size=80M',
-          '--character-set-server=utf8mb4',
-          '--collation-server=utf8mb4_unicode_ci',
-          '--default-time-zone=+8:00',
-          '--lower-case-table-names=1'
-        ]
-    environment:
-      MYSQL_DATABASE: 'integrity-cloud'
-      MYSQL_ROOT_PASSWORD: password
   integrity-redis:
     container_name: integrity-redis
     image: redis
@@ -94,12 +76,17 @@ services:
       dockerfile: dockerfile
     ports:
       - "9201:9201"
+    environment:
+      - DM_HOST=${DM_HOST:-host.docker.internal}
+      - DM_PORT=${DM_PORT:-5236}
+      - DM_DATABASE=${DM_DATABASE:-INTEGRITY-CLOUD}
+      - DM_SCHEMA=${DM_DATABASE}
+      - DM_USERNAME=${DM_USERNAME:-SYSDBA}
+      - DM_PASSWORD=${DM_PASSWORD:-IntegritySupervision0}
     depends_on:
       - integrity-redis
-      - integrity-mysql
     links:
       - integrity-redis
-      - integrity-mysql
   integrity-modules-gen:
     container_name: integrity-modules-gen
     build:
@@ -107,10 +94,13 @@ services:
       dockerfile: dockerfile
     ports:
       - "9202:9202"
-    depends_on:
-      - integrity-mysql
-    links:
-      - integrity-mysql
+    environment:
+      - DM_HOST=${DM_HOST:-host.docker.internal}
+      - DM_PORT=${DM_PORT:-5236}
+      - DM_DATABASE=${DM_DATABASE:-INTEGRITY-CLOUD}
+      - DM_SCHEMA=${DM_DATABASE}
+      - DM_USERNAME=${DM_USERNAME:-SYSDBA}
+      - DM_PASSWORD=${DM_PASSWORD:-IntegritySupervision0}
   integrity-modules-job:
     container_name: integrity-modules-job
     build:
@@ -118,10 +108,13 @@ services:
       dockerfile: dockerfile
     ports:
       - "9203:9203"
-    depends_on:
-      - integrity-mysql
-    links:
-      - integrity-mysql
+    environment:
+      - DM_HOST=${DM_HOST:-host.docker.internal}
+      - DM_PORT=${DM_PORT:-5236}
+      - DM_DATABASE=${DM_DATABASE:-INTEGRITY-CLOUD}
+      - DM_SCHEMA=${DM_DATABASE}
+      - DM_USERNAME=${DM_USERNAME:-SYSDBA}
+      - DM_PASSWORD=${DM_PASSWORD:-IntegritySupervision0}
   integrity-modules-file:
     container_name: integrity-modules-file
     build:

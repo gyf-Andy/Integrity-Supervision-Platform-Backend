@@ -37,7 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			AND parent_id = #{parentId}
 		</if>
 		<if test="deptName != null and deptName != ''">
-			AND dept_name like concat('%', #{deptName}, '%')
+			AND dept_name like '%' || #{deptName} || '%'
 		</if>
 		<if test="status != null and status != ''">
 			AND status = #{status}
@@ -69,20 +69,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	<select id="hasChildByDeptId" parameterType="String" resultType="int">
 		select count(1) from sys_dept
-		where del_flag = '0' and parent_id = #{deptId} limit 1
+		where del_flag = '0' and parent_id = #{deptId}
+        FETCH FIRST 1 ROWS ONLY
 	</select>
 	
 	<select id="selectChildrenDeptById" parameterType="String" resultMap="SysDeptResult">
-		select * from sys_dept where find_in_set(#{deptId}, ancestors)
+		select * from sys_dept where INSTR(',' || ancestors || ',', ',' || #{deptId} || ',') &gt; 0
 	</select>
 	
 	<select id="selectNormalChildrenDeptById" parameterType="String" resultType="int">
-		select count(*) from sys_dept where status = 0 and del_flag = '0' and find_in_set(#{deptId}, ancestors)
+		select count(*) from sys_dept where status = 0 and del_flag = '0' and INSTR(',' || ancestors || ',', ',' || #{deptId} || ',') &gt; 0
 	</select>
 	
 	<select id="checkDeptNameUnique" resultMap="SysDeptResult">
 	    <include refid="selectDeptVo"/>
-		where dept_name=#{deptName} and parent_id = #{parentId} and del_flag = '0' limit 1
+		where dept_name=#{deptName} and parent_id = #{parentId} and del_flag = '0'
+        FETCH FIRST 1 ROWS ONLY
 	</select>
     
     <insert id="insertDept" parameterType="SysDept">
@@ -155,3 +157,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</delete>
 
 </mapper> 
+
+
+

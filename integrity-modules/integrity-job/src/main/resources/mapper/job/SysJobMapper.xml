@@ -37,7 +37,7 @@
         <include refid="selectJobVo"/>
         <where>
             <if test="jobName != null and jobName != ''">
-                AND job_name like concat('%', #{jobName}, '%')
+                AND job_name like '%' || #{jobName} || '%'
             </if>
             <if test="jobGroup != null and jobGroup != ''">
                 AND job_group = #{jobGroup}
@@ -46,7 +46,7 @@
                 AND status = #{status}
             </if>
             <if test="invokeTarget != null and invokeTarget != ''">
-                AND invoke_target like concat('%', #{invokeTarget}, '%')
+                AND invoke_target like '%' || #{invokeTarget} || '%'
             </if>
             <if test="jobId != null and jobId != ''">
                 and jobId in
@@ -118,12 +118,12 @@
         ,
         case when job_group = 'TASK_GROUP' then (
         SELECT
-        CONCAT('[', GROUP_CONCAT(DISTINCT inner_concat ORDER BY batch_index SEPARATOR '],['), ']') AS combined_values
+        '[' || LISTAGG(DISTINCT inner_concat, '],[') WITHIN GROUP (ORDER BY batch_index) || ']' AS combined_values
         FROM (
         SELECT
         sjd.job_id,
         batch_index,
-        GROUP_CONCAT(dependent_id ORDER BY dependent_id SEPARATOR ',') AS inner_concat
+        LISTAGG(dependent_id, ',') WITHIN GROUP (ORDER BY dependent_id) AS inner_concat
         FROM
         sys_job_dependent sjd
         GROUP BY
@@ -276,7 +276,7 @@
         from sys_job m
         where m.create_by = #{params.userId}
         <if test="jobName != null and jobName != ''">
-            AND m.job_name like concat('%', #{jobName}, '%')
+            AND m.job_name like '%' || #{jobName} || '%'
         </if>
         <if test="status != null and status != ''">
             AND m.status = #{status}
@@ -284,3 +284,6 @@
         order by m.parent_id, m.order_num
     </select>
 </mapper> 
+
+
+

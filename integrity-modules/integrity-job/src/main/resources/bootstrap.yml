@@ -10,6 +10,11 @@ spring:
   profiles:
     # 环境配置
     active: dev
+  datasource:
+    driver-class-name: ${DB_DRIVER_CLASS_NAME:dm.jdbc.driver.DmDriver}
+    url: ${DB_URL:jdbc:dm://${DM_HOST:localhost}:${DM_PORT:5236}/${DM_DATABASE:INTEGRITY-CLOUD}?schema=${DM_SCHEMA:INTEGRITY-CLOUD}}
+    username: ${DB_USERNAME:${DM_USERNAME:SYSDBA}}
+    password: ${DB_PASSWORD:${DM_PASSWORD:IntegritySupervision0}}
   cloud:
     nacos:
       discovery:
@@ -27,3 +32,7 @@ spring:
         # 共享配置
         shared-configs:
           - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+
+mybatis-plus:
+  type-aliases-package: com.integrity.job.domain
+  mapper-locations: classpath:mapper/**/*.xml

@@ -24,19 +24,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	    <include refid="selectDictTypeVo"/>
 		<where>
 		    <if test="dictName != null and dictName != ''">
-				AND dict_name like concat('%', #{dictName}, '%')
+				AND dict_name like '%' || #{dictName} || '%'
 			</if>
 			<if test="status != null and status != ''">
 				AND status = #{status}
 			</if>
 			<if test="dictType != null and dictType != ''">
-				AND dict_type like concat('%', #{dictType}, '%')
+				AND dict_type like '%' || #{dictType} || '%'
 			</if>
 			<if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
-				and date_format(create_time,'%Y%m%d') &gt;= date_format(#{params.beginTime},'%Y%m%d')
+				and TO_CHAR(create_time,'YYYY-MM-DD') &gt;= SUBSTR(#{params.beginTime}, 1, 10)
 			</if>
 			<if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
-				and date_format(create_time,'%Y%m%d') &lt;= date_format(#{params.endTime},'%Y%m%d')
+				and TO_CHAR(create_time,'YYYY-MM-DD') &lt;= SUBSTR(#{params.endTime}, 1, 10)
 			</if>
 	    </where>
 	</select>
@@ -57,7 +57,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	<select id="checkDictTypeUnique" parameterType="String" resultMap="SysDictTypeResult">
 		<include refid="selectDictTypeVo"/>
-		where dict_type = #{dictType} limit 1
+		where dict_type = #{dictType}
+        FETCH FIRST 1 ROWS ONLY
 	</select>
 	
 	<delete id="deleteDictTypeById" parameterType="String">
@@ -105,3 +106,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</insert>
 	
 </mapper> 
+
+
+

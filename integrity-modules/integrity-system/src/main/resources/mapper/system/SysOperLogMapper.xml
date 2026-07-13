@@ -37,10 +37,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<include refid="selectOperLogVo"/>
 		<where>
 			<if test="operIp != null and operIp != ''">
-				AND oper_ip like concat('%', #{operIp}, '%')
+				AND oper_ip like '%' || #{operIp} || '%'
 			</if>
 			<if test="title != null and title != ''">
-				AND title like concat('%', #{title}, '%')
+				AND title like '%' || #{title} || '%'
 			</if>
 			<if test="businessType != null">
 				AND business_type = #{businessType}
@@ -55,7 +55,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 				AND status = #{status}
 			</if>
 			<if test="operName != null and operName != ''">
-				AND oper_name like concat('%', #{operName}, '%')
+				AND oper_name like '%' || #{operName} || '%'
 			</if>
 			<if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
 				AND oper_time &gt;= #{params.beginTime}
@@ -84,3 +84,5 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
 </mapper> 
+
+

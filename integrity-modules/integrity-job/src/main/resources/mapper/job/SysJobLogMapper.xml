@@ -32,7 +32,7 @@
         <include refid="selectJobLogVo"/>
         <where>
             <if test="jobName != null and jobName != ''">
-                AND job_name like concat('%', #{jobName}, '%')
+                AND job_name like '%' || #{jobName} || '%'
             </if>
             <if test="jobGroup != null and jobGroup != '' and jobGroup.equals('DEFAULT')">
                 AND job_group = #{jobGroup} and dependent_id is null
@@ -47,13 +47,13 @@
                 AND batch_date = #{batchDate}
             </if>
             <if test="invokeTarget != null and invokeTarget != ''">
-                AND invoke_target like concat('%', #{invokeTarget}, '%')
+                AND invoke_target like '%' || #{invokeTarget} || '%'
             </if>
             <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
-                and date_format(create_time,'%Y%m%d') &gt;= date_format(#{params.beginTime},'%Y%m%d')
+                and TO_CHAR(create_time,'YYYY-MM-DD') &gt;= SUBSTR(#{params.beginTime}, 1, 10)
             </if>
             <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
-                and date_format(create_time,'%Y%m%d') &lt;= date_format(#{params.endTime},'%Y%m%d')
+                and TO_CHAR(create_time,'YYYY-MM-DD') &lt;= SUBSTR(#{params.endTime}, 1, 10)
             </if>
         </where>
         order by create_time desc
@@ -95,7 +95,7 @@
         AND batch_date = #{batchDate}
         AND run_mode = #{runMode}
         ORDER BY create_time DESC
-        LIMIT 1
+        FETCH FIRST 1 ROWS ONLY
     </select>
 
     <insert id="insertJobLog" parameterType="SysJobLog">
@@ -158,3 +158,5 @@
     </insert>
 
 </mapper> 
+
+

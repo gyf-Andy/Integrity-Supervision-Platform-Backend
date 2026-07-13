@@ -43,10 +43,10 @@ spring:
         connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
       datasource:
         master:
-          driver-class-name: com.mysql.cj.jdbc.Driver
-          url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:integrity-cloud}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-          username: ${MYSQL_USERNAME:root}
-          password: ${MYSQL_PASSWORD:root}
+          driver-class-name: ${DB_DRIVER_CLASS_NAME:dm.jdbc.driver.DmDriver}
+          url: ${DB_URL:jdbc:dm://${DM_HOST:localhost}:${DM_PORT:5236}/${DM_DATABASE:INTEGRITY-CLOUD}?schema=${DM_SCHEMA:INTEGRITY-CLOUD}}
+          username: ${DB_USERNAME:${DM_USERNAME:SYSDBA}}
+          password: ${DB_PASSWORD:${DM_PASSWORD:IntegritySupervision0}}
   cloud:
     nacos:
       discovery:
@@ -61,7 +61,7 @@ spring:
         shared-configs:
           - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
 
-mybatis:
+mybatis-plus:
   type-aliases-package: com.integrity.system
   mapper-locations: classpath:mapper/**/*.xml
 

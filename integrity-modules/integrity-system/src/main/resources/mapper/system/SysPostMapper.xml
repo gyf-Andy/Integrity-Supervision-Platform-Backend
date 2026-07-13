@@ -26,13 +26,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	    <include refid="selectPostVo"/>
 		<where>
 			<if test="postCode != null and postCode != ''">
-				AND post_code like concat('%', #{postCode}, '%')
+				AND post_code like '%' || #{postCode} || '%'
 			</if>
 			<if test="status != null and status != ''">
 				AND status = #{status}
 			</if>
 			<if test="postName != null and postName != ''">
-				AND post_name like concat('%', #{postName}, '%')
+				AND post_name like '%' || #{postName} || '%'
 			</if>
 		</where>
 	</select>
@@ -64,12 +64,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	<select id="checkPostNameUnique" parameterType="String" resultMap="SysPostResult">
 		<include refid="selectPostVo"/>
-		 where post_name=#{postName} limit 1
+		 where post_name=#{postName}
+        FETCH FIRST 1 ROWS ONLY
 	</select>
 	
 	<select id="checkPostCodeUnique" parameterType="String" resultMap="SysPostResult">
 		<include refid="selectPostVo"/>
-		 where post_code=#{postCode} limit 1
+		 where post_code=#{postCode}
+        FETCH FIRST 1 ROWS ONLY
 	</select>
 	
 	<update id="updatePost" parameterType="SysPost">
@@ -120,3 +122,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  	</delete>
 
 </mapper> 
+
+
+

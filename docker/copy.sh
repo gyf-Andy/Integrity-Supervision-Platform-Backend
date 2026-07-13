@@ -6,11 +6,7 @@ usage() {
 	exit 1
 }
 
-
-# copy sql
-echo "begin copy sql "
-cp ../sql/integrity-cloud.sql ./mysql/db
-cp ../sql/integrity-config.sql ./mysql/db
+# SQL files are imported into the external Dameng databases directly.
 
 # copy html
 echo "begin copy html "

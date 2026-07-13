@@ -375,7 +375,7 @@ public class ExcelUtil<T>
                     Object val = this.getCellValue(row, entry.getKey());
 
                     // 如果不存在实例则新建.
-                    entity = (entity == null ? clazz.newInstance() : entity);
+                    entity = (entity == null ? clazz.getDeclaredConstructor().newInstance() : entity);
                     // 从map中得到对应列的field.
                     Field field = (Field) entry.getValue()[0];
                     Excel attr = (Excel) entry.getValue()[1];
@@ -528,7 +528,7 @@ public class ExcelUtil<T>
             writeSheet();
             wb.write(response.getOutputStream());
         }
-        catch (Exception e)
+        catch (IOException e)
         {
             log.error("导出Excel异常{}", e.getMessage());
         }
@@ -615,7 +615,7 @@ public class ExcelUtil<T>
             {
                 Field field = (Field) os[0];
                 Excel excel = (Excel) os[1];
-                if (Collection.class.isAssignableFrom(field.getType()) && StringUtils.isNotNull(subList))
+                if (Collection.class.isAssignableFrom(field.getType()) && subList != null)
                 {
                     boolean subFirst = false;
                     for (Object obj : subList)
@@ -1167,7 +1167,7 @@ public class ExcelUtil<T>
     {
         try
         {
-            Object instance = excel.handler().newInstance();
+            Object instance = excel.handler().getDeclaredConstructor().newInstance();
             Method formatMethod = excel.handler().getMethod("format", new Class[] { Object.class, String[].class, Cell.class, Workbook.class });
             value = formatMethod.invoke(instance, value, excel.args(), cell, this.wb);
         }

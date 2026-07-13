@@ -50,13 +50,29 @@
         <!-- Pagehelper -->
         <dependency>
             <groupId>com.github.pagehelper</groupId>
-            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <artifactId>pagehelper</artifactId>
+            <exclusions>
+                <!-- mybatis-plus 3.5.17 已自带 mybatis 3.5.19，排除 pagehelper 传递的旧版 mybatis-spring-boot-starter -->
+                <exclusion>
+                    <groupId>org.mybatis.spring.boot</groupId>
+                    <artifactId>mybatis-spring-boot-starter</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.github.pagehelper</groupId>
+                    <artifactId>pagehelper-spring-boot-starter</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
-        <!-- Mybatis Spring -->
+        <!-- MyBatis-Plus -->
         <dependency>
-            <groupId>org.mybatis</groupId>
-            <artifactId>mybatis-spring</artifactId>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-jsqlparser</artifactId>
         </dependency>
 
         <!-- Hibernate Validator -->
@@ -123,4 +139,5 @@
     </dependencies>
 
 </project>
+
 
