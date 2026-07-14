@@ -368,5 +368,12 @@ public class SysUserController extends BaseController
     {
         return R.ok(userService.findUserIdList(warmFlowInteractiveTypeVo));
     }
+
+    @InnerAuth
+    @PostMapping("/findUserIdList")
+    public R<List<SysUser>> findUserIdListByBody(@RequestBody WarmFlowInteractiveTypeVo warmFlowInteractiveTypeVo)
+    {
+        return R.ok(userService.findUserIdList(warmFlowInteractiveTypeVo));
+    }
 }
 
