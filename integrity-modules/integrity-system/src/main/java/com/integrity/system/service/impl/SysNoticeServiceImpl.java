@@ -48,6 +48,17 @@ public class SysNoticeServiceImpl implements ISysNoticeService
     }
 
     /**
+     * 顶栏铃铛用：取最新的若干条有效公告。limit 上限 50，避免被滥用。
+     */
+    @Override
+    public List<SysNotice> selectLatestNotices(SysNotice notice, int limit)
+    {
+        int safeLimit = limit > 0 && limit <= 50 ? limit : 5;
+        SysNotice query = notice == null ? new SysNotice() : notice;
+        return noticeMapper.selectLatestNotices(query, safeLimit);
+    }
+
+    /**
      * 新增公告
      * 
      * @param notice 公告信息

@@ -1,6 +1,7 @@
 package com.integrity.system.api;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -65,6 +66,6 @@ public interface RemoteUserService
     public R<String> idMappingRoleName(@PathVariable("roleId") String roleId, @RequestHeader(SecurityConstants.FROM_SOURCE) String source);
 
     @GetMapping("/user/findUserIdList")
-    public R<List<SysUser>> findUserIdList(WarmFlowInteractiveTypeVo warmFlowInteractiveTypeVo, @RequestHeader(SecurityConstants.FROM_SOURCE) String source);
+    public R<List<SysUser>> findUserIdList(@SpringQueryMap WarmFlowInteractiveTypeVo warmFlowInteractiveTypeVo, @RequestHeader(SecurityConstants.FROM_SOURCE) String source);
 }
 

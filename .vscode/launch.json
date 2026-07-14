@@ -1,0 +1,84 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Gateway - 8080",
+            "request": "launch",
+            "mainClass": "com.integrity.gateway.IntegrityGatewayApplication",
+            "projectName": "integrity-gateway",
+            "vmArgs": "-Dfile.encoding=UTF-8 -Xms256m -Xmx512m"
+        },
+        {
+            "type": "java",
+            "name": "Auth - 9200",
+            "request": "launch",
+            "mainClass": "com.integrity.auth.IntegrityAuthApplication",
+            "projectName": "integrity-auth",
+            "vmArgs": "-Dfile.encoding=UTF-8 -Xms256m -Xmx512m"
+        },
+        {
+            "type": "java",
+            "name": "System - 9201",
+            "request": "launch",
+            "mainClass": "com.integrity.system.IntegritySystemApplication",
+            "projectName": "integrity-modules-system",
+            "vmArgs": "-Dfile.encoding=UTF-8 -Xms256m -Xmx512m"
+        },
+        {
+            "type": "java",
+            "name": "Flow - 9204",
+            "request": "launch",
+            "mainClass": "com.integrity.flow.IntegrityFlowApplication",
+            "projectName": "integrity-flow",
+            "vmArgs": "-Dfile.encoding=UTF-8 -Xms256m -Xmx512m"
+        },
+        {
+            "type": "java",
+            "name": "Job - 9203",
+            "request": "launch",
+            "mainClass": "com.integrity.job.IntegrityJobApplication",
+            "projectName": "integrity-modules-job",
+            "vmArgs": "-Dfile.encoding=UTF-8 -Xms256m -Xmx512m"
+        },
+        {
+            "type": "java",
+            "name": "File - 9300",
+            "request": "launch",
+            "mainClass": "com.integrity.file.IntegrityFileApplication",
+            "projectName": "integrity-modules-file",
+            "vmArgs": "-Dfile.encoding=UTF-8 -Xms256m -Xmx512m"
+        },
+        {
+            "type": "java",
+            "name": "Gen - 9202",
+            "request": "launch",
+            "mainClass": "com.integrity.gen.IntegrityGenApplication",
+            "projectName": "integrity-modules-gen",
+            "vmArgs": "-Dfile.encoding=UTF-8 -Xms256m -Xmx512m"
+        },
+        {
+            "type": "java",
+            "name": "Monitor - 9100",
+            "request": "launch",
+            "mainClass": "com.integrity.modules.monitor.IntegrityMonitorApplication",
+            "projectName": "integrity-visual-monitor",
+            "vmArgs": "-Dfile.encoding=UTF-8 -Xms256m -Xmx512m"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Run All Services",
+            "configurations": [
+                "Gateway - 8080",
+                "Auth - 9200",
+                "System - 9201",
+                "Flow - 9204",
+                "Job - 9203",
+                "File - 9300",
+                "Gen - 9202",
+                "Monitor - 9100"
+            ]
+        }
+    ]
+}

@@ -154,6 +154,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	<insert id="insertGenTable" parameterType="GenTable">
         insert into gen_table (
+			table_id,
 			<if test="tableName != null">table_name,</if>
 			<if test="tableComment != null and tableComment != ''">table_comment,</if>
 			<if test="className != null and className != ''">class_name,</if>
@@ -167,9 +168,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="genType != null and genType != ''">gen_type,</if>
 			<if test="genPath != null and genPath != ''">gen_path,</if>
 			<if test="remark != null and remark != ''">remark,</if>
- 			<if test="createBy != null and createBy != ''">create_by,</if>
+			<if test="createBy != null and createBy != ''">create_by,</if>
 			create_time
          )values(
+			#{tableId},
 			<if test="tableName != null">#{tableName},</if>
 			<if test="tableComment != null and tableComment != ''">#{tableComment},</if>
 			<if test="className != null and className != ''">#{className},</if>

@@ -1,6 +1,7 @@
 package com.integrity.system.mapper;
 
 import java.util.List;
+import org.apache.ibatis.annotations.Param;
 import com.integrity.system.domain.SysNotice;
 
 /**
@@ -27,8 +28,14 @@ public interface SysNoticeMapper
     public List<SysNotice> selectNoticeList(SysNotice notice);
 
     /**
+     * 查询最新有效（status=0）公告，按创建时间倒序取前 limit 条，
+     * 供顶栏铃铛下拉使用。不限权限——任何登录用户都可读。
+     */
+    public List<SysNotice> selectLatestNotices(@Param("notice") SysNotice notice, @Param("limit") int limit);
+
+    /**
      * 新增公告
-     * 
+     *
      * @param notice 公告信息
      * @return 结果
      */

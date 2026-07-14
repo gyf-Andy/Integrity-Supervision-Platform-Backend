@@ -46,6 +46,17 @@ public class SysNoticeController extends BaseController
     }
 
     /**
+     * 顶栏铃铛下拉：取最新有效公告（status=0），按 create_time 倒序。
+     * 仅要求登录态，不要求 system:notice:list 权限，方便普通用户也能收到广播。
+     */
+    @GetMapping("/top")
+    public AjaxResult top(SysNotice notice)
+    {
+        List<SysNotice> list = noticeService.selectLatestNotices(notice, 5);
+        return success(list);
+    }
+
+    /**
      * 根据通知公告编号获取详细信息
      */
     @RequiresPermissions("system:notice:query")

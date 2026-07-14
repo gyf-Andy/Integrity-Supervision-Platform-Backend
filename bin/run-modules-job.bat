@@ -1,14 +1,11 @@
 @echo off
-echo.
-echo [��Ϣ] ʹ��Jar��������Modules-Job���̡�
-echo.
-
-cd %~dp0
-cd ../integrity-modules/integrity-job/target
-
+cd /d "%~dp0"
+cd ..\integrity-modules\integrity-job\target
+if not exist integrity-modules-job.jar (
+    echo [ERR] integrity-modules-job.jar not found. Run package first.
+    pause & exit /b 1
+)
 set JAVA_OPTS=-Xms512m -Xmx1024m -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=512m
-
-java -Dfile.encoding=utf-8 %JAVA_OPTS% -jar integrity-modules-job.jar
-
-cd bin
+echo [OK] Starting integrity-modules-job ...
+java -Dfile.encoding=UTF-8 %JAVA_OPTS% -jar integrity-modules-job.jar
 pause

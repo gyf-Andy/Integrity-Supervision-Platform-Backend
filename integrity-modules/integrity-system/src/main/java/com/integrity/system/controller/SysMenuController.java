@@ -70,8 +70,8 @@ public class SysMenuController extends BaseController
     /**
      * 加载对应角色菜单列表树
      */
-    @GetMapping(value = "/roleMenuTreeselect/{roleId}")
-    public AjaxResult roleMenuTreeselect(@PathVariable("roleId") String roleId)
+    @GetMapping(value = "/roleMenuTreeSelect/{roleId}")
+    public AjaxResult roleMenuTreeSelect(@PathVariable("roleId") String roleId)
     {
         String userId = SecurityUtils.getUserId();
         List<SysMenu> menus = menuService.selectMenuList(userId);

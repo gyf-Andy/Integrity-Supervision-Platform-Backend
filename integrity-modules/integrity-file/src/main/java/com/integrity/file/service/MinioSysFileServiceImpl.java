@@ -1,12 +1,15 @@
 package com.integrity.file.service;
 
 import java.io.InputStream;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import com.alibaba.nacos.common.utils.IoUtils;
 import com.integrity.file.config.MinioConfig;
 import com.integrity.file.utils.FileUploadUtils;
+
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 

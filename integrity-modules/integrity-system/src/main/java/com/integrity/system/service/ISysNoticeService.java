@@ -27,6 +27,15 @@ public interface ISysNoticeService
     public List<SysNotice> selectNoticeList(SysNotice notice);
 
     /**
+     * 查询最新有效公告，用作顶栏铃铛下拉（不限权限，任何登录用户都能调用）。
+     *
+     * @param notice 过滤条件（仅会用到 noticeType，可传 null）
+     * @param limit 取前 limit 条
+     * @return 公告集合
+     */
+    public List<SysNotice> selectLatestNotices(SysNotice notice, int limit);
+
+    /**
      * 新增公告
      * 
      * @param notice 公告信息

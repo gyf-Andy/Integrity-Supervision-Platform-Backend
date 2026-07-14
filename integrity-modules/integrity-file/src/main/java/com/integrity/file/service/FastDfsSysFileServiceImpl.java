@@ -1,15 +1,17 @@
 package com.integrity.file.service;
 
-import com.alibaba.nacos.common.utils.IoUtils;
-import com.github.tobato.fastdfs.domain.fdfs.StorePath;
-import com.github.tobato.fastdfs.service.FastFileStorageClient;
-import com.integrity.common.core.utils.file.FileTypeUtils;
-import lombok.RequiredArgsConstructor;
+import java.io.InputStream;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.InputStream;
+import com.alibaba.nacos.common.utils.IoUtils;
+import com.github.tobato.fastdfs.domain.fdfs.StorePath;
+import com.github.tobato.fastdfs.service.FastFileStorageClient;
+import com.integrity.common.core.utils.file.FileTypeUtils;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * FastDFS 文件存储
