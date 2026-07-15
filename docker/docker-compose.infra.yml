@@ -1,0 +1,64 @@
+name: ${COMPOSE_PROJECT_NAME:-integrity}
+
+services:
+  nacos:
+    image: ${NACOS_IMAGE:-nacos/nacos-server:latest}
+    container_name: ${COMPOSE_PROJECT_NAME:-integrity}-nacos
+    restart: unless-stopped
+    environment:
+      MODE: standalone
+      NACOS_AUTH_ENABLE: "false"
+      DM_HOST: ${DM_HOST:-host.docker.internal}
+      DM_PORT: ${DM_PORT:-5236}
+      DM_CONFIG_DATABASE: ${DM_CONFIG_DATABASE:-INTEGRITY-CONFIG}
+      DM_SCHEMA: ${DM_CONFIG_SCHEMA:-SYSDBA}
+      DM_USERNAME: ${DM_USERNAME:-SYSDBA}
+      DM_PASSWORD: ${DM_PASSWORD:-IntegritySupervision0}
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+      - "9849:9849"
+    volumes:
+      - ./nacos/conf/application.properties:/home/nacos/conf/application.properties:ro
+      - ./nacos/plugins:/home/nacos/plugins:ro
+      - nacos-logs:/home/nacos/logs
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - integrity-net
+
+  redis:
+    image: ${REDIS_IMAGE:-redis:latest}
+    container_name: ${COMPOSE_PROJECT_NAME:-integrity}-redis
+    restart: unless-stopped
+    command: redis-server /home/integrity/redis/redis.conf
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/conf/redis.conf:/home/integrity/redis/redis.conf:ro
+      - redis-data:/data
+    networks:
+      - integrity-net
+
+  dm:
+    image: ${DM_IMAGE:-dm8_single:latest}
+    container_name: ${COMPOSE_PROJECT_NAME:-integrity}-dm
+    restart: unless-stopped
+    profiles:
+      - dm
+    ports:
+      - "5236:5236"
+    volumes:
+      - dm-data:/opt/dmdbms/data
+      - ../sql:/docker-entrypoint-initdb.d:ro
+    networks:
+      - integrity-net
+
+networks:
+  integrity-net:
+    name: ${COMPOSE_PROJECT_NAME:-integrity}-net
+
+volumes:
+  nacos-logs:
+  redis-data:
+  dm-data:

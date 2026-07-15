@@ -1,9 +1,0 @@
-# 基础镜像
-FROM nacos/nacos-server
-# author
-MAINTAINER Integrity-Supervision-Platform
-
-# 复制conf文件到路径
-COPY ./conf/application.properties /home/nacos/conf/application.properties
-# Copy optional external datasource plugins, for example Dameng datasource plugin and JDBC driver.
-COPY ./plugins/ /home/nacos/plugins/

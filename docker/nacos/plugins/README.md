@@ -5,4 +5,4 @@ For Dameng-backed Nacos configuration storage, the Nacos image must have:
 - a Nacos datasource plugin whose type is `dm`
 - the Dameng JDBC driver, for example `DmJdbcDriver18`
 
-The files in this directory are copied to `/home/nacos/plugins/` by `docker/nacos/dockerfile`.
+The files in this directory are mounted to `/home/nacos/plugins/` by `docker/docker-compose.infra.yml`.

@@ -1,0 +1,184 @@
+name: ${COMPOSE_PROJECT_NAME:-integrity}
+
+x-app-common-env: &app-common-env
+  JAVA_OPTS: ${JAVA_OPTS:-}
+  NACOS_USERNAME: ${NACOS_USERNAME:-nacos}
+  NACOS_PASSWORD: ${NACOS_PASSWORD:-nacos}
+  SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR: ${NACOS_SERVER_ADDR:-nacos:8848}
+  SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR: ${NACOS_SERVER_ADDR:-nacos:8848}
+  SPRING_CLOUD_SENTINEL_TRANSPORT_DASHBOARD: ${SENTINEL_DASHBOARD:-host.docker.internal:8718}
+  SPRING_CLOUD_SENTINEL_DATASOURCE_DS1_NACOS_SERVER_ADDR: ${NACOS_SERVER_ADDR:-nacos:8848}
+  SPRING_DATA_REDIS_HOST: ${REDIS_HOST:-redis}
+  SPRING_DATA_REDIS_PORT: ${REDIS_PORT:-6379}
+  SPRING_DATA_REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+  REDIS_HOST: ${REDIS_HOST:-redis}
+  REDIS_PORT: ${REDIS_PORT:-6379}
+  REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+  DM_HOST: ${DM_HOST:-host.docker.internal}
+  DM_PORT: ${DM_PORT:-5236}
+  DM_USERNAME: ${DM_USERNAME:-SYSDBA}
+  DM_PASSWORD: ${DM_PASSWORD:-IntegritySupervision0}
+
+x-app-defaults: &app-defaults
+  restart: unless-stopped
+  extra_hosts:
+    - "host.docker.internal:host-gateway"
+  networks:
+    - integrity-net
+  depends_on:
+    - nacos
+    - redis
+
+services:
+  integrity-gateway:
+    <<: *app-defaults
+    image: ${IMAGE_PREFIX:-integrity}/gateway:${IMAGE_TAG:-dev}
+    container_name: ${COMPOSE_PROJECT_NAME:-integrity}-gateway
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.java17
+      args:
+        JAR_FILE: integrity-gateway/target/integrity-gateway.jar
+        JAVA17_IMAGE: ${JAVA17_IMAGE:-eclipse-temurin:17-jre}
+    environment:
+      <<: *app-common-env
+    ports:
+      - "8080:8080"
+
+  integrity-auth:
+    <<: *app-defaults
+    image: ${IMAGE_PREFIX:-integrity}/auth:${IMAGE_TAG:-dev}
+    container_name: ${COMPOSE_PROJECT_NAME:-integrity}-auth
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.java17
+      args:
+        JAR_FILE: integrity-auth/target/integrity-auth.jar
+        JAVA17_IMAGE: ${JAVA17_IMAGE:-eclipse-temurin:17-jre}
+    environment:
+      <<: *app-common-env
+    ports:
+      - "9200:9200"
+
+  integrity-system:
+    <<: *app-defaults
+    image: ${IMAGE_PREFIX:-integrity}/system:${IMAGE_TAG:-dev}
+    container_name: ${COMPOSE_PROJECT_NAME:-integrity}-system
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.java17
+      args:
+        JAR_FILE: integrity-modules/integrity-system/target/integrity-modules-system.jar
+        JAVA17_IMAGE: ${JAVA17_IMAGE:-eclipse-temurin:17-jre}
+    environment:
+      <<: *app-common-env
+      DM_DATABASE: ${DM_DATABASE:-INTEGRITY-CLOUD}
+      DM_SCHEMA: ${DM_SCHEMA:-INTEGRITY-CLOUD}
+    ports:
+      - "9201:9201"
+
+  integrity-gen:
+    <<: *app-defaults
+    image: ${IMAGE_PREFIX:-integrity}/gen:${IMAGE_TAG:-dev}
+    container_name: ${COMPOSE_PROJECT_NAME:-integrity}-gen
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.java17
+      args:
+        JAR_FILE: integrity-modules/integrity-gen/target/integrity-modules-gen.jar
+        JAVA17_IMAGE: ${JAVA17_IMAGE:-eclipse-temurin:17-jre}
+    environment:
+      <<: *app-common-env
+      DM_DATABASE: ${DM_DATABASE:-INTEGRITY-CLOUD}
+      DM_SCHEMA: ${DM_SCHEMA:-INTEGRITY-CLOUD}
+    ports:
+      - "9202:9202"
+
+  integrity-job:
+    <<: *app-defaults
+    image: ${IMAGE_PREFIX:-integrity}/job:${IMAGE_TAG:-dev}
+    container_name: ${COMPOSE_PROJECT_NAME:-integrity}-job
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.java17
+      args:
+        JAR_FILE: integrity-modules/integrity-job/target/integrity-modules-job.jar
+        JAVA17_IMAGE: ${JAVA17_IMAGE:-eclipse-temurin:17-jre}
+    environment:
+      <<: *app-common-env
+      DM_DATABASE: ${DM_DATABASE:-INTEGRITY-CLOUD}
+      DM_SCHEMA: ${DM_SCHEMA:-INTEGRITY-CLOUD}
+    ports:
+      - "9203:9203"
+
+  integrity-flow:
+    <<: *app-defaults
+    image: ${IMAGE_PREFIX:-integrity}/flow:${IMAGE_TAG:-dev}
+    container_name: ${COMPOSE_PROJECT_NAME:-integrity}-flow
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.java17
+      args:
+        JAR_FILE: integrity-modules/integrity-flow/target/integrity-flow.jar
+        JAVA17_IMAGE: ${JAVA17_IMAGE:-eclipse-temurin:17-jre}
+    environment:
+      <<: *app-common-env
+      DM_DATABASE: ${DM_FLOW_DATABASE:-INTEGRITY-CLOUD-FLOW}
+      DM_SCHEMA: ${DM_FLOW_SCHEMA:-INTEGRITY-CLOUD-FLOW}
+    ports:
+      - "9204:9204"
+
+  integrity-file:
+    <<: *app-defaults
+    image: ${IMAGE_PREFIX:-integrity}/file:${IMAGE_TAG:-dev}
+    container_name: ${COMPOSE_PROJECT_NAME:-integrity}-file
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.java17
+      args:
+        JAR_FILE: integrity-modules/integrity-file/target/integrity-modules-file.jar
+        JAVA17_IMAGE: ${JAVA17_IMAGE:-eclipse-temurin:17-jre}
+    environment:
+      <<: *app-common-env
+    ports:
+      - "9300:9300"
+    volumes:
+      - upload-data:/home/integrity/uploadPath
+
+  integrity-monitor:
+    <<: *app-defaults
+    image: ${IMAGE_PREFIX:-integrity}/monitor:${IMAGE_TAG:-dev}
+    container_name: ${COMPOSE_PROJECT_NAME:-integrity}-monitor
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.java17
+      args:
+        JAR_FILE: integrity-visual/integrity-monitor/target/integrity-visual-monitor.jar
+        JAVA17_IMAGE: ${JAVA17_IMAGE:-eclipse-temurin:17-jre}
+    environment:
+      <<: *app-common-env
+    ports:
+      - "9100:9100"
+
+  nginx:
+    image: ${NGINX_IMAGE:-nginx:latest}
+    container_name: ${COMPOSE_PROJECT_NAME:-integrity}-nginx
+    restart: unless-stopped
+    depends_on:
+      - integrity-gateway
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/html/dist:/home/integrity/projects/integrity-ui:ro
+      - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf:ro
+      - nginx-logs:/var/log/nginx
+    networks:
+      - integrity-net
+
+networks:
+  integrity-net:
+    name: ${COMPOSE_PROJECT_NAME:-integrity}-net
+
+volumes:
+  upload-data:
+  nginx-logs:
