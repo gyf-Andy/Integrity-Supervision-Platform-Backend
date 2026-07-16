@@ -1,0 +1,54 @@
+--- META dataId=integrity-job-dev.yml group=DEFAULT_GROUP tenant= type=yaml
+spring:
+  data:
+    redis:
+      host: redis	# docker compose: internal redis
+      port: 6379
+      password:
+  datasource:
+    driver-class-name: dm.jdbc.driver.DmDriver
+    url: jdbc:dm://${DM_HOST:localhost}:5236/INTEGRITY-CLOUD?schema=INTEGRITY-CLOUD
+    username: SYSDBA
+    password: IntegritySupervision0
+
+mybatis-plus:
+  type-aliases-package: com.integrity.job.domain
+  mapper-locations: classpath:mapper/**/*.xml
+
+springdoc:
+  gatewayUrl: http://localhost:8080/${spring.application.name}
+  api-docs:
+    enabled: true
+  info:
+    title: Job API
+    description: Job API
+    contact:
+      name: Integrity-Supervision-Platform
+      url: https://integrity-supervision-platform.local
+--- META dataId=integrity-job-dev.yml group=DEFAULT_GROUP tenant=public type=yaml
+spring:
+  data:
+    redis:
+      host: redis	# docker compose: internal redis
+      port: 6379
+      password:
+  datasource:
+    driver-class-name: dm.jdbc.driver.DmDriver
+    url: jdbc:dm://${DM_HOST:localhost}:5236/INTEGRITY-CLOUD?schema=INTEGRITY-CLOUD
+    username: SYSDBA
+    password: IntegritySupervision0
+
+mybatis-plus:
+  type-aliases-package: com.integrity.job.domain
+  mapper-locations: classpath:mapper/**/*.xml
+
+springdoc:
+  gatewayUrl: http://localhost:8080/${spring.application.name}
+  api-docs:
+    enabled: true
+  info:
+    title: Job API
+    description: Job API
+    contact:
+      name: Integrity-Supervision-Platform
+      url: https://integrity-supervision-platform.local

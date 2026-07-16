@@ -1,0 +1,50 @@
+--- META dataId=integrity-file-dev.yml group=DEFAULT_GROUP tenant= type=yaml
+# local    
+file:
+    domain: http://127.0.0.1:9300
+    path: D:/integrity-supervision/uploadPath
+    prefix: /statics
+
+# FastDFS
+fdfs:
+  domain: http://127.0.0.1
+  soTimeout: 3000
+  connectTimeout: 2000
+  trackerList: 127.0.0.1:22122
+
+# Minio
+minio:
+  url: http://127.0.0.1:9000
+  accessKey: minioadmin
+  secretKey: minioadmin
+  bucketName: integrity
+
+referer:
+  enabled: false
+  allowed-domains: localhost,127.0.0.1,integrity-supervision-platform.local
+
+--- META dataId=integrity-file-dev.yml group=DEFAULT_GROUP tenant=public type=yaml
+# local    
+file:
+    domain: http://127.0.0.1:9300
+    path: D:/integrity-supervision/uploadPath
+    prefix: /statics
+
+# FastDFS
+fdfs:
+  domain: http://127.0.0.1
+  soTimeout: 3000
+  connectTimeout: 2000
+  trackerList: 127.0.0.1:22122
+
+# Minio
+minio:
+  url: http://127.0.0.1:9000
+  accessKey: minioadmin
+  secretKey: minioadmin
+  bucketName: integrity
+
+referer:
+  enabled: false
+  allowed-domains: localhost,127.0.0.1,integrity-supervision-platform.local
+

@@ -1,0 +1,16 @@
+--- META dataId=integrity-auth-dev.yml group=DEFAULT_GROUP tenant= type=yaml
+spring:
+  data:
+    redis:
+      host: redis	# docker compose: internal redis
+      port: 6379
+      password: 
+
+--- META dataId=integrity-auth-dev.yml group=DEFAULT_GROUP tenant=public type=yaml
+spring:
+  data:
+    redis:
+      host: redis	# docker compose: internal redis
+      port: 6379
+      password: 
+

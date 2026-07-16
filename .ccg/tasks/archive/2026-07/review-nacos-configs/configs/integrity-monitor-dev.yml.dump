@@ -1,0 +1,24 @@
+--- META dataId=integrity-monitor-dev.yml group=DEFAULT_GROUP tenant= type=yaml
+# spring
+spring:
+  security:
+    user:
+      name: admin
+      password: 123456
+  boot:
+    admin:
+      ui:
+        title: 廉政监管平台服务监控
+
+--- META dataId=integrity-monitor-dev.yml group=DEFAULT_GROUP tenant=public type=yaml
+# spring
+spring:
+  security:
+    user:
+      name: admin
+      password: 123456
+  boot:
+    admin:
+      ui:
+        title: 廉政监管平台服务监控
+
