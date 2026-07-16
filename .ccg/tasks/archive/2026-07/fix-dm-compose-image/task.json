@@ -1,0 +1,12 @@
+{
+  "id": "fix-dm-compose-image",
+  "title": "修复 docker compose 拉取 dm8_single 镜像失败",
+  "status": "completed",
+  "complexity": "S",
+  "risk": "low",
+  "domain": "infra",
+  "currentPhase": "completed",
+  "nextAction": "导入 dm8_single:latest 镜像或将 DM_IMAGE 指向可访问的镜像仓库后重新启动 Compose",
+  "createdAt": "2026-07-16T08:20:00Z",
+  "branch": "master"
+}
