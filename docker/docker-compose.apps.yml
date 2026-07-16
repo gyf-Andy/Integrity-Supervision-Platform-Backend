@@ -1,5 +1,10 @@
 name: ${COMPOSE_PROJECT_NAME:-integrity}
 
+# 纳入基础设施（nacos/redis/sentinel/dm），避免单独用本文件运行时报错
+# "depends on undefined service: nacos"。仍可单独用 infra.yml 仅启动基础设施。
+include:
+  - docker-compose.infra.yml
+
 x-app-common-env: &app-common-env
   JAVA_OPTS: ${JAVA_OPTS:-}
   NACOS_USERNAME: ${NACOS_USERNAME:-nacos}
@@ -130,6 +135,11 @@ services:
 
   integrity-file:
     <<: *app-defaults
+    depends_on:
+      - nacos
+      - redis
+      - minio
+      - minio-init
     image: ${IMAGE_PREFIX:-integrity}/file:${IMAGE_TAG:-dev}
     container_name: ${COMPOSE_PROJECT_NAME:-integrity}-file
     build:
@@ -142,8 +152,6 @@ services:
       <<: *app-common-env
     ports:
       - "9300:9300"
-    volumes:
-      - upload-data:/home/integrity/uploadPath
 
   integrity-monitor:
     <<: *app-defaults
@@ -180,5 +188,4 @@ networks:
     name: ${COMPOSE_PROJECT_NAME:-integrity}-net
 
 volumes:
-  upload-data:
   nginx-logs:

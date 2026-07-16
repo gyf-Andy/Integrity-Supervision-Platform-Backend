@@ -75,3 +75,4 @@ volumes:
   nacos-logs:
   redis-data:
   dm-data:
+  minio-data:
