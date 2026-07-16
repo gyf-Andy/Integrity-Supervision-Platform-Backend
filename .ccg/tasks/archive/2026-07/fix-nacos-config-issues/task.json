@@ -1,0 +1,12 @@
+{
+  "id": "fix-nacos-config-issues",
+  "title": "修复 Nacos 配置检查发现的问题",
+  "status": "in_progress",
+  "complexity": "M",
+  "risk": "medium",
+  "domain": "infra",
+  "currentPhase": "completed",
+  "nextAction": "归档任务",
+  "createdAt": "2026-07-16T09:40:00Z",
+  "branch": "master"
+}
