@@ -1,0 +1,12 @@
+{
+  "id": "fix-minio-image-pull",
+  "title": "修复 Docker 拉取 MinIO 镜像 EOF",
+  "status": "completed",
+  "complexity": "S",
+  "risk": "low",
+  "domain": "backend",
+  "currentPhase": "completed",
+  "nextAction": "向用户说明 Docker registry EOF 处理方式",
+  "createdAt": "2026-07-16T06:45:00Z",
+  "branch": "master"
+}
