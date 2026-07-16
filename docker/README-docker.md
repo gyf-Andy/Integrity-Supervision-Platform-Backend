@@ -112,3 +112,60 @@ mvn -DskipTests clean package
     ```bash
     docker compose --env-file docker/.env -f docker/docker-compose.infra.yml -f docker/docker-compose.apps.yml logs -f integrity-flow
     ```
+
+---
+
+## Docker 环境下的 MinIO 文件存储
+
+Docker 模式默认使用 MinIO 作为文件存储。
+
+`docker/.env` 中的关键变量：
+
+```env
+MINIO_IMAGE=quay.io/minio/minio:latest
+MINIO_MC_IMAGE=quay.io/minio/mc:latest
+MINIO_ENABLED=true
+MINIO_CLIENT_ADDR=http://minio:9000
+MINIO_PUBLIC_URL=http://localhost:9000
+MINIO_BUCKET=integrity
+MINIO_ACCESS_KEY=minioadmin
+MINIO_SECRET_KEY=minioadmin
+```
+
+`MINIO_CLIENT_ADDR` 是 `integrity-file` 在 Compose 内部网络中访问 MinIO 的地址。
+`MINIO_PUBLIC_URL` 是文件上传后返回给浏览器访问的地址。
+
+启动完整服务：
+
+```bash
+docker compose --env-file docker/.env -f docker/docker-compose.infra.yml -f docker/docker-compose.apps.yml up -d --build integrity-file
+```
+
+MinIO 控制台：
+
+```text
+http://localhost:9001
+```
+
+默认登录账号和密码由 `MINIO_ACCESS_KEY`、`MINIO_SECRET_KEY` 控制。
+
+如果从 Docker Hub 拉取 `minio/minio:latest` 时遇到 CloudFront `EOF`，
+可以使用上面的默认 `quay.io/minio/...` 镜像，或者将 `MINIO_IMAGE`、
+`MINIO_MC_IMAGE` 指向内网镜像仓库。
+
+如果 Docker Hub 和 Quay 都出现 `EOF`，需要先处理 Docker 守护进程到镜像仓库的网络。
+常见处理方式：
+
+```bash
+# 方式 A：配置 Docker Desktop 代理或镜像加速后重试：
+docker compose -f docker/docker-compose.infra.yml pull minio minio-init
+
+# 方式 B：从离线 tar 包导入镜像，然后打成 .env 中配置的标签：
+docker load -i minio.tar
+docker load -i mc.tar
+docker tag <已导入的MinIO镜像> quay.io/minio/minio:latest
+docker tag <已导入的mc镜像> quay.io/minio/mc:latest
+```
+
+也可以直接修改 `docker/.env` 中的 `MINIO_IMAGE` 和 `MINIO_MC_IMAGE`，
+让它们指向内网镜像仓库，例如 `registry.example.com/minio/minio:latest`。

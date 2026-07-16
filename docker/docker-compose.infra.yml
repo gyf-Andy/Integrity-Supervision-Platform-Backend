@@ -67,6 +67,39 @@ services:
     networks:
       - integrity-net
 
+  minio:
+    image: ${MINIO_IMAGE:-quay.io/minio/minio:latest}
+    container_name: ${COMPOSE_PROJECT_NAME:-integrity}-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-data:/data
+    networks:
+      - integrity-net
+
+  minio-init:
+    image: ${MINIO_MC_IMAGE:-quay.io/minio/mc:latest}
+    container_name: ${COMPOSE_PROJECT_NAME:-integrity}-minio-init
+    depends_on:
+      - minio
+    environment:
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
+      MINIO_BUCKET: ${MINIO_BUCKET:-integrity}
+    entrypoint: >
+      sh -c "until mc alias set local http://minio:9000 $$MINIO_ACCESS_KEY $$MINIO_SECRET_KEY; do echo 'waiting for minio...'; sleep 1; done;
+      mc mb -p local/$$MINIO_BUCKET || true;
+      mc anonymous set download local/$$MINIO_BUCKET;
+      echo 'bucket ready';"
+    networks:
+      - integrity-net
+
 networks:
   integrity-net:
     name: ${COMPOSE_PROJECT_NAME:-integrity}-net

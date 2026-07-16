@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1
-
 ARG JAVA17_IMAGE=eclipse-temurin:17-jre
 FROM ${JAVA17_IMAGE}
 

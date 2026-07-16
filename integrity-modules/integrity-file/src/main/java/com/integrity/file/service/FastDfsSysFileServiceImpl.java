@@ -3,6 +3,7 @@ package com.integrity.file.service;
 import java.io.InputStream;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
  * @author Integrity-Supervision-Platform
  */
 @Service
+@ConditionalOnProperty(prefix = "fdfs", name = "enabled", havingValue = "true")
 @RequiredArgsConstructor
 public class FastDfsSysFileServiceImpl implements ISysFileService {
     /**

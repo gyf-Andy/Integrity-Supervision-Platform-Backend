@@ -3,10 +3,13 @@ package com.integrity.file.service;
 import java.io.InputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.nacos.common.utils.IoUtils;
+import com.integrity.common.core.utils.file.MimeTypeUtils;
 import com.integrity.file.config.MinioConfig;
 import com.integrity.file.utils.FileUploadUtils;
 
@@ -18,7 +21,9 @@ import io.minio.PutObjectArgs;
  *
  * @author Integrity-Supervision-Platform
  */
+@Primary
 @Service
+@ConditionalOnProperty(prefix = "minio", name = "enabled", havingValue = "true")
 public class MinioSysFileServiceImpl implements ISysFileService
 {
     @Autowired
@@ -37,6 +42,7 @@ public class MinioSysFileServiceImpl implements ISysFileService
     @Override
     public String uploadFile(MultipartFile file) throws Exception
     {
+        FileUploadUtils.assertAllowed(file, MimeTypeUtils.DEFAULT_ALLOWED_EXTENSION);
         String fileName = FileUploadUtils.extractFilename(file);
         InputStream inputStream = file.getInputStream();
         PutObjectArgs args = PutObjectArgs.builder()

@@ -23,6 +23,16 @@ x-app-common-env: &app-common-env
   DM_PORT: ${DM_PORT:-5236}
   DM_USERNAME: ${DM_USERNAME:-SYSDBA}
   DM_PASSWORD: ${DM_PASSWORD:-IntegritySupervision0}
+  FILE_DOMAIN: ${FILE_DOMAIN:-http://localhost:9300}
+  FILE_PREFIX: ${FILE_PREFIX:-/statics}
+  FILE_PATH: ${FILE_PATH:-/home/integrity/uploadPath}
+  MINIO_ENABLED: ${MINIO_ENABLED:-true}
+  MINIO_ENDPOINT: ${MINIO_CLIENT_ADDR:-http://minio:9000}
+  MINIO_URL: ${MINIO_PUBLIC_URL:-http://localhost:9000}
+  MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
+  MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
+  MINIO_BUCKET_NAME: ${MINIO_BUCKET:-integrity}
+  FDFS_ENABLED: ${FDFS_ENABLED:-false}
 
 x-app-defaults: &app-defaults
   restart: unless-stopped
