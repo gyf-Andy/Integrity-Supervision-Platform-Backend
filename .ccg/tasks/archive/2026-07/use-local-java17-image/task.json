@@ -1,0 +1,12 @@
+{
+  "id": "use-local-java17-image",
+  "title": "改用本机已有 Java 17 基础镜像构建 Docker 应用",
+  "status": "completed",
+  "complexity": "S",
+  "risk": "low",
+  "domain": "infra",
+  "currentPhase": "completed",
+  "nextAction": "已改用本机已有 Java 17 JDK 镜像并验证应用 Compose 构建启动成功",
+  "createdAt": "2026-07-16T09:25:00Z",
+  "branch": "master"
+}
