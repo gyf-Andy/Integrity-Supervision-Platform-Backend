@@ -1,0 +1,12 @@
+{
+  "id": "use-local-dm-database",
+  "title": "改为使用宿主机本地达梦数据库",
+  "status": "completed",
+  "complexity": "M",
+  "risk": "medium",
+  "domain": "infra",
+  "currentPhase": "completed",
+  "nextAction": "已改为默认连接宿主机达梦并验证 infra 启动成功",
+  "createdAt": "2026-07-16T09:01:04Z",
+  "branch": "master"
+}
