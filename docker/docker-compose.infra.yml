@@ -7,7 +7,10 @@ services:
     restart: unless-stopped
     environment:
       MODE: standalone
-      NACOS_AUTH_ENABLE: "false"
+      NACOS_AUTH_ENABLE: "true"
+      NACOS_AUTH_TOKEN: ${NACOS_AUTH_TOKEN:-U2VjcmV0S2V5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5}
+      NACOS_AUTH_IDENTITY_KEY: ${NACOS_AUTH_IDENTITY_KEY:-serverIdentity}
+      NACOS_AUTH_IDENTITY_VALUE: ${NACOS_AUTH_IDENTITY_VALUE:-security}
       DM_HOST: ${DM_HOST:-host.docker.internal}
       DM_PORT: ${DM_PORT:-5236}
       DM_CONFIG_DATABASE: ${DM_CONFIG_DATABASE:-INTEGRITY-CONFIG}
@@ -16,6 +19,7 @@ services:
       DM_PASSWORD: ${DM_PASSWORD:-IntegritySupervision0}
     ports:
       - "8848:8848"
+      - "8849:8080"
       - "9848:9848"
       - "9849:9849"
     volumes:
@@ -37,6 +41,15 @@ services:
     volumes:
       - ./redis/conf/redis.conf:/home/integrity/redis/redis.conf:ro
       - redis-data:/data
+    networks:
+      - integrity-net
+
+  sentinel:
+    image: ${SENTINEL_IMAGE:-bladex/sentinel-dashboard:1.8.7}
+    container_name: ${COMPOSE_PROJECT_NAME:-integrity}-sentinel
+    restart: unless-stopped
+    ports:
+      - "8718:8858"
     networks:
       - integrity-net
 

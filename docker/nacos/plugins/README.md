@@ -1,8 +1,8 @@
-Place the Nacos datasource plugin and database driver required by your Nacos version here.
+请在此处放置您的 Nacos 版本所需的 Nacos 数据源插件和数据库驱动程序。
 
-For Dameng-backed Nacos configuration storage, the Nacos image must have:
+对于以达梦数据库为后端的 Nacos 配置存储，Nacos 镜像必须包含：
 
-- a Nacos datasource plugin whose type is `dm`
-- the Dameng JDBC driver, for example `DmJdbcDriver18`
+- 一个类型为 `dm` 的 Nacos 数据源插件
+- 达梦 JDBC 驱动程序，例如 `DmJdbcDriver18`
 
-The files in this directory are mounted to `/home/nacos/plugins/` by `docker/docker-compose.infra.yml`.
+此目录下的文件会被 `docker/docker-compose.infra.yml` 挂载到 `/home/nacos/plugins/`。
