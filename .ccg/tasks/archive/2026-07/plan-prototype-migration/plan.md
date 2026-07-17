@@ -11,7 +11,7 @@
 - 数据管理：`dataManage/*`
 - 数据模型分析：`DataModel.vue`、`dataModel/*`
 - 智慧监管应用：`SuperviseApp.vue`、`superviseApp/*`
-- 监督态势展示：`LzSituation.vue`、`situationDisplay/*`
+- 监督态势展示：原型态势展示入口、`situationDisplay/*`
 - 工具型页面：`ModelDesigner.vue`、`BillAnalysis.vue`
 - 原型公共布局/业务组件：`AppLayout.vue`、`SupervisedModelPanel.vue`
 - 原型 mock/service/type/shared/data：`services/*`、`data/*`、`shared/*`、`types/*`
@@ -29,7 +29,7 @@
 ```text
 src/
 ├── views/
-│   └── lz/
+│   └── supervision/
 │       ├── overview/
 │       │   └── index.vue
 │       ├── data-access/
@@ -52,8 +52,8 @@ src/
 │       │   ├── case/
 │       │   ├── entity-hub/
 │       │   ├── inspection/
-│       │   ├── lz-info/
-│       │   ├── lz-work/
+│       │   ├── integrity-info/
+│       │   ├── integrity-work/
 │       │   ├── procurement/
 │       │   ├── project/
 │       │   └── project-supervision/
@@ -65,36 +65,36 @@ src/
 │           ├── model-designer.vue
 │           └── bill-analysis.vue
 ├── components/
-│   └── lz/
-│       ├── LzAppLayout.vue
+│   └── supervision/
+│       ├── SupervisionAppLayout.vue
 │       └── SupervisedModelPanel.vue
 ├── api/
-│   └── lz/
+│   └── supervision/
 │       ├── dataAccess.js
 │       ├── dataModel.js
 │       ├── dataSupervision.js
 │       ├── situation.js
 │       └── llm.js
 ├── services/
-│   └── lz/
+│   └── supervision/
 │       ├── mock/
 │       └── adapters/
 ├── data/
-│   └── lz/
+│   └── supervision/
 ├── types/
-│   └── lz/
+│   └── supervision/
 └── assets/
     └── styles/
-        └── lz.scss
+        └── supervision.scss
 ```
 
 说明：
 
-- `src/views/lz` 是迁移边界，后端菜单 `component` 可配置为 `lz/data-access/index` 这类路径。
-- `src/components/lz` 放原型跨模块复用组件，不放到全局 `components` 根目录。
-- `src/services/lz/mock` 暂存原型 mock 数据服务，后续逐步替换为 `src/api/lz` 真实接口。
-- `src/data/lz` 暂存静态 mock 数据；长期应减少直接依赖。
-- `src/assets/styles/lz.scss` 放原型样式的隔离入口，避免直接覆盖正式前端全局样式。
+- `src/views/supervision` 是迁移边界，后端菜单 `component` 可配置为 `supervision/data-access/index` 这类路径。
+- `src/components/supervision` 放原型跨模块复用组件，不放到全局 `components` 根目录。
+- `src/services/supervision/mock` 暂存原型 mock 数据服务，后续逐步替换为 `src/api/supervision` 真实接口。
+- `src/data/supervision` 暂存静态 mock 数据；长期应减少直接依赖。
+- `src/assets/styles/supervision.scss` 放原型样式的隔离入口，避免直接覆盖正式前端全局样式。
 
 ## 路由与菜单策略
 
@@ -110,8 +110,8 @@ src/
    - 数据模型分析
    - 智慧监管应用
    - 监督态势展示
-3. 菜单 `component` 指向 `src/views/lz/**` 下的组件路径。
-4. 原型内部顶部导航 `AppLayout.vue` 不应直接替换正式前端 `layout/index.vue`。更推荐作为 `LzAppLayout.vue` 用在业务域首页/沉浸式页面中；普通管理页继续使用正式前端侧边栏 + tagsView。
+3. 菜单 `component` 指向 `src/views/supervision/**` 下的组件路径。
+4. 原型内部顶部导航 `AppLayout.vue` 不应直接替换正式前端 `layout/index.vue`。更推荐作为 `SupervisionAppLayout.vue` 用在业务域首页/沉浸式页面中；普通管理页继续使用正式前端侧边栏 + tagsView。
 
 ## 分阶段实施
 
@@ -120,13 +120,13 @@ src/
 - 清理原型中的 `node_modules`、`._*`、临时预览文件，不迁入正式前端。
 - 梳理原型页面清单、依赖清单、公共组件清单。
 - 确认是否保留 TypeScript：推荐第一版 JS 化迁移，除非正式前端同意引入 TS 构建。
-- 建立 `views/lz`、`components/lz`、`services/lz`、`data/lz` 等目录。
+- 建立 `views/supervision`、`components/supervision`、`services/supervision`、`data/supervision` 等目录。
 
 ### Phase 2：基础可编译迁入
 
-- 迁入公共样式，改为 `lz.scss` 并只在 LZ 入口组件中引用。
-- 迁入 `AppLayout.vue` 为 `components/lz/LzAppLayout.vue`，调整路由跳转路径。
-- 迁入原型公共类型/数据/mock service，先放在 `services/lz/mock` 与 `data/lz`。
+- 迁入公共样式，改为 `supervision.scss` 并只在监督业务入口组件中引用。
+- 迁入 `AppLayout.vue` 为 `components/supervision/SupervisionAppLayout.vue`，调整路由跳转路径。
+- 迁入原型公共类型/数据/mock service，先放在 `services/supervision/mock` 与 `data/supervision`。
 - 迁入核心入口页：`overview/index.vue`、`data-access/index.vue`、`data-model/index.vue`、`supervise-app/index.vue`、`situation-display/index.vue`。
 - 先跑 `npm run build:prod`，解决编译层问题。
 
@@ -137,7 +137,7 @@ src/
 1. 首页/总览与态势展示：最适合快速验证视觉和 ECharts。
 2. 数据引接采报：涉及 localStorage/mock service，改造成本中等。
 3. 数据模型分析/数据管理：页面多，按 panel 逐个迁。
-4. 智慧监管应用：最大模块，按 project/procurement/inspection/case/lz-info/entity-hub 分包迁。
+4. 智慧监管应用：最大模块，按 project/procurement/inspection/case/integrity-info/entity-hub 分包迁。
 5. 工具页面：模型设计器、账单分析，最后处理交互细节。
 
 每迁一个模块都跑一次构建，避免最后一次性爆雷。
@@ -152,7 +152,7 @@ src/
 ### Phase 5：mock 到 API 的适配层
 
 - 先保留 mock service，使页面迁入后可运行。
-- 对每个 service 建立对应 `src/api/lz/*.js`。
+- 对每个 service 建立对应 `src/api/supervision/*.js`。
 - 页面不要直接依赖 mock；统一经 adapter：
   - 开发早期：adapter 调 mock。
   - 后端接口完成后：adapter 切换到 request。
@@ -185,13 +185,13 @@ src/
 
 第一批迁移只做“壳 + 可见主页面”：
 
-- `src/views/lz/overview/index.vue`
-- `src/views/lz/data-access/index.vue`
-- `src/views/lz/data-model/index.vue`
-- `src/views/lz/supervise-app/index.vue`
-- `src/views/lz/situation-display/index.vue`
-- `src/components/lz/LzAppLayout.vue`
-- `src/services/lz/mock/*`
-- `src/data/lz/*`
+- `src/views/supervision/overview/index.vue`
+- `src/views/supervision/data-access/index.vue`
+- `src/views/supervision/data-model/index.vue`
+- `src/views/supervision/supervise-app/index.vue`
+- `src/views/supervision/situation-display/index.vue`
+- `src/components/supervision/SupervisionAppLayout.vue`
+- `src/services/supervision/mock/*`
+- `src/data/supervision/*`
 
 目标是先能登录正式前端，通过后端菜单进入原型业务模块，并完成生产构建。后续再逐块迁子页面和真实接口。

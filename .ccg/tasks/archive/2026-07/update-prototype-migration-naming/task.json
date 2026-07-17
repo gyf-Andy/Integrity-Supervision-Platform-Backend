@@ -1,0 +1,12 @@
+{
+  "id": "update-prototype-migration-naming",
+  "title": "修订原型迁移计划命名约束",
+  "status": "completed",
+  "complexity": "S",
+  "risk": "low",
+  "domain": "frontend",
+  "currentPhase": "completed",
+  "nextAction": "归档任务",
+  "createdAt": "2026-07-17T00:00:00Z",
+  "branch": "master"
+}
