@@ -38,6 +38,18 @@ src/store/modules/tagsView.js
 - 不新增 `subsystems` 这种正式前端里没有的中间大目录，避免迁入后路径过深、菜单 component 难维护。
 - 文件夹和文件名不使用原型简称作为命名。
 
+## 清晰易读结构规则
+
+为保证迁移后长期可维护，目录结构遵守以下约束：
+
+- **最多三层业务语义**：`分系统 / 业务域 / 功能页`。再细的 UI 片段放 `components/`，不要继续拆目录。
+- **一个目录只表达一个概念**：例如 `dataIngestion/task` 只放任务管理相关内容，不混入模板、统计、监控。
+- **路由页统一用 `index.vue`**：后端菜单 `component` 路径更稳定，迁移时也更容易批量检查。
+- **组件就近放置**：只被某个业务域使用的组件放在该业务域 `components/`；多个业务域复用后再提升到分系统级 `components/`。
+- **接口按业务域拆文件**：例如 `api/dataModelAnalysis/asset.js`，不要把一个分系统所有接口塞进单个超大文件。
+- **mock 只做临时过渡**：每个分系统可以有 `mock/`，但页面优先通过 adapter/API 调用，避免 mock 深度散落在页面里。
+- **避免空泛目录名**：不用 `pages`、`modules`、`common panels` 这类难判断职责的名字；必须能从目录名看出业务含义。
+
 ## 推荐总目录
 
 ```text
@@ -75,6 +87,7 @@ src/
 - 分系统内部复用组件放在本分系统自己的 `components/` 中，不优先放全局 `src/components`。
 - 原型 mock 数据临时放入对应分系统的 `mock/` 或 `data/` 子目录，后续替换成 `src/api/{module}` 的正式接口。
 - 正式生产仍建议由后端菜单返回动态路由；本地静态路由只作为开发期兜底。
+- 各分系统内部采用“入口页 + 业务域目录 + 就近组件”的结构，例如 `dataModelAnalysis/asset/overview/index.vue`。
 
 ## 一、数据接引采报分系统
 
@@ -181,6 +194,7 @@ src/api/dataIngestion/
 src/views/dataModelAnalysis/
 ├── index.vue
 ├── cleaning/
+│   ├── index.vue
 │   ├── task/
 │   │   └── index.vue
 │   ├── component/
@@ -194,6 +208,7 @@ src/views/dataModelAnalysis/
 │       ├── ComponentDialog.vue
 │       └── EnginePanel.vue
 ├── asset/
+│   ├── index.vue
 │   ├── overview/
 │   │   └── index.vue
 │   ├── catalog/
@@ -209,6 +224,7 @@ src/views/dataModelAnalysis/
 │   └── topicLibrary/
 │       └── index.vue
 ├── dataService/
+│   ├── index.vue
 │   ├── service/
 │   │   └── index.vue
 │   ├── component/
@@ -218,6 +234,7 @@ src/views/dataModelAnalysis/
 │   └── approval/
 │       └── index.vue
 ├── model/
+│   ├── index.vue
 │   ├── management/
 │   │   └── index.vue
 │   ├── designer/
@@ -229,27 +246,49 @@ src/views/dataModelAnalysis/
 │   └── market/
 │       └── index.vue
 ├── settings/
+│   ├── index.vue
 │   ├── dataSource/
+│   │   └── index.vue
 │   ├── fileData/
+│   │   └── index.vue
 │   ├── category/
+│   │   └── index.vue
 │   ├── authorization/
+│   │   └── index.vue
 │   └── customFunction/
+│       └── index.vue
 ├── caseBill/
+│   ├── index.vue
 │   ├── import/
+│   │   └── index.vue
 │   ├── tools/
+│   │   └── index.vue
 │   ├── person/
+│   │   └── index.vue
 │   └── bankAnalysis/
+│       └── index.vue
 ├── report/
+│   ├── index.vue
 │   ├── template/
+│   │   └── index.vue
 │   └── generate/
+│       └── index.vue
 ├── tools/
+│   ├── index.vue
 │   ├── formDesigner/
+│   │   └── index.vue
 │   ├── tableDesigner/
+│   │   └── index.vue
 │   ├── chart/
+│   │   └── index.vue
 │   ├── portalDesigner/
+│   │   └── index.vue
 │   └── ocr/
+│       └── index.vue
 ├── components/
-│   └── common panels...
+│   ├── SectionMenu.vue
+│   ├── ToolbarActions.vue
+│   └── ChartCard.vue
 ├── mock/
 │   └── dataModelAnalysisData.js
 └── types.js
@@ -265,7 +304,7 @@ src/api/dataModelAnalysis/
 └── tools.js
 ```
 
-说明：上面省略的末级目录都按 `index.vue` 补齐，例如 `settings/dataSource/index.vue`、`caseBill/bankAnalysis/index.vue`。
+说明：分系统入口 `index.vue` 负责整体布局和二级菜单；业务域入口如 `asset/index.vue` 负责该域默认跳转或概览；具体功能页仍落到 `asset/overview/index.vue` 这类稳定路径。
 
 ### 路由建议
 
@@ -330,6 +369,7 @@ src/api/dataModelAnalysis/
 src/views/smartSupervision/
 ├── index.vue
 ├── project/
+│   ├── index.vue
 │   ├── overview/
 │   │   └── index.vue
 │   ├── list/
@@ -350,36 +390,66 @@ src/views/smartSupervision/
 │       ├── RiskAssessmentPanel.vue
 │       └── ActionComplianceTable.vue
 ├── procurement/
+│   ├── index.vue
 │   ├── overview/
+│   │   └── index.vue
 │   ├── list/
+│   │   └── index.vue
 │   ├── risk/
+│   │   └── index.vue
 │   ├── handle/
+│   │   └── index.vue
 │   ├── expert/
+│   │   └── index.vue
 │   └── components/
 ├── inspection/
+│   ├── index.vue
 │   ├── problemImport/
+│   │   └── index.vue
 │   ├── rectifyPublish/
+│   │   └── index.vue
 │   └── rectifyAssessment/
+│       └── index.vue
 ├── caseArchive/
+│   ├── index.vue
 │   ├── overview/
+│   │   └── index.vue
 │   ├── clueAnalysis/
+│   │   └── index.vue
 │   ├── search/
+│   │   └── index.vue
 │   └── billAnalysis/
+│       └── index.vue
 ├── integrityInfo/
+│   ├── index.vue
 │   ├── basic/
+│   │   └── index.vue
 │   ├── personPortrait/
+│   │   └── index.vue
 │   ├── policy/
+│   │   └── index.vue
 │   ├── businessOnline/
+│   │   └── index.vue
 │   ├── guard/
+│   │   └── index.vue
 │   ├── clueHandle/
+│   │   └── index.vue
 │   ├── accessTrace/
+│   │   └── index.vue
 │   ├── riskAssessment/
+│   │   └── index.vue
 │   └── integrityReview/
+│       └── index.vue
 ├── entityHub/
+│   ├── index.vue
 │   ├── overview/
+│   │   └── index.vue
 │   ├── project/
+│   │   └── index.vue
 │   ├── person/
+│   │   └── index.vue
 │   └── event/
+│       └── index.vue
 ├── components/
 │   ├── SupervisedModelDrawer.vue
 │   └── SupervisedModelPanel.vue
@@ -397,7 +467,7 @@ src/api/smartSupervision/
 └── model.js
 ```
 
-说明：`procurement/*`、`inspection/*`、`caseArchive/*`、`integrityInfo/*`、`entityHub/*` 的每个路由目录都补 `index.vue`。
+说明：每条业务链都有自己的 `index.vue`，用于承载该业务链默认页、二级导航或重定向；具体页面都用 `xxx/index.vue`，便于后端菜单稳定引用。
 
 ### 路由建议
 
@@ -615,7 +685,8 @@ src/components/
 ├── ChartPanel/
 ├── RiskTag/
 ├── StatusBadge/
-└── ...
+├── QueryForm/
+└── WorkflowViewer/
 ```
 
 临时 mock 和适配层建议先放在各分系统内部：
