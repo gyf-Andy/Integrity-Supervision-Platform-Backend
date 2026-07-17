@@ -2,7 +2,7 @@
 
 ## 目标
 
-正式前后端当前已有页面能力，对应原型中的“系统安全管理分系统”。接下来迁移原型时，应按五个分系统重新组织正式前端文件结构，而不是按原型现有目录原样搬迁。
+正式前后端当前已有页面能力，对应原型中的“系统安全管理分系统”。接下来迁移原型时，应按五个分系统重新组织正式前端文件结构，并且命名必须参照正式前端 `Integrity-Supervision-Platform-Frontend` 的现有格式。
 
 五个分系统为：
 
@@ -14,66 +14,67 @@
 
 本文只规划前端文件结构和页面跳转关系，不实施迁移代码。
 
-## 命名原则
+## 正式前端命名基准
 
+正式前端现有命名风格：
+
+```text
+src/views/system/user/index.vue
+src/views/system/user/authRole.vue
+src/views/flow/task/done/doneList.vue
+src/views/monitor/job/components/JobViewAdd.vue
+src/api/system/user.js
+src/api/monitor/jobNotice.js
+src/store/modules/tagsView.js
+```
+
+因此迁移规划采用以下规则：
+
+- 顶层业务目录使用小驼峰或短小写：`dataIngestion`、`dataModelAnalysis`、`smartSupervision`、`integritySituation`、`securityManagement`。
+- 路由主页面使用目录加 `index.vue`，例如 `views/dataIngestion/task/index.vue`。
+- 非路由子页面或详情页使用小驼峰 `.vue`，例如 `doneList.vue`、`authRole.vue` 这种风格。
+- 页面内部组件放在当前模块的 `components/` 目录，组件文件可使用 PascalCase，参照 `JobViewAdd.vue`。
+- API 按业务目录拆分，文件使用小驼峰，例如 `api/dataIngestion/dataSource.js`。
+- 不新增 `subsystems` 这种正式前端里没有的中间大目录，避免迁入后路径过深、菜单 component 难维护。
 - 文件夹和文件名不使用原型简称作为命名。
-- 顶层按分系统组织，避免把页面平铺到 `src/views`。
-- 路由级页面放 `pages`，页面内部切换面板放 `components` 或 `panels`。
-- 数据模拟、临时适配、正式接口分开，避免页面直接依赖 mock。
-- 系统安全管理优先复用正式前端现有 `system`、`monitor`、`flow`、`tool` 结构，不重复迁入原型单页。
 
 ## 推荐总目录
 
 ```text
 src/
 ├── views/
-│   ├── portal/
-│   │   └── index.vue
-│   └── subsystems/
-│       ├── data-ingestion/
-│       ├── data-model-analysis/
-│       ├── smart-supervision/
-│       ├── integrity-situation/
-│       └── security-management/
-├── components/
-│   └── subsystems/
-│       ├── common/
-│       ├── data-ingestion/
-│       ├── data-model-analysis/
-│       ├── smart-supervision/
-│       ├── integrity-situation/
-│       └── security-management/
+│   ├── index.vue                         # 现有首页，可改造为五个分系统入口
+│   ├── dataIngestion/                    # 数据接引采报分系统
+│   ├── dataModelAnalysis/                # 数据模型分析
+│   ├── smartSupervision/                 # 智慧监管应用分系统
+│   ├── integritySituation/               # 廉政态势展示分系统
+│   └── securityManagement/               # 系统安全管理补充页，已有能力优先复用 system/monitor/tool
 ├── api/
-│   └── subsystems/
-│       ├── data-ingestion.js
-│       ├── data-model-analysis.js
-│       ├── smart-supervision.js
-│       ├── integrity-situation.js
-│       └── security-management.js
-├── services/
-│   └── subsystems/
-│       ├── adapters/
-│       └── mock/
-├── data/
-│   └── subsystems/
-├── types/
-│   └── subsystems/
-├── router/
+│   ├── dataIngestion/
+│   ├── dataModelAnalysis/
+│   ├── smartSupervision/
+│   ├── integritySituation/
+│   └── securityManagement/
+├── store/
 │   └── modules/
-│       └── subsystems.js
+│       ├── dataIngestion.js              # 仅在确有跨页状态时新增
+│       ├── dataModelAnalysis.js
+│       ├── smartSupervision.js
+│       └── integritySituation.js
 └── assets/
     └── styles/
-        └── subsystems/
+        ├── dataIngestion.scss
+        ├── dataModelAnalysis.scss
+        ├── smartSupervision.scss
+        └── integritySituation.scss
 ```
 
 说明：
 
-- `views/portal/index.vue` 是五个分系统的统一入口，对应原型首页/总览卡片。
-- `views/subsystems/*/pages` 放可被路由和后端菜单直接指向的页面。
-- `components/subsystems/*` 放分系统内部复用面板、表格、图表、弹窗。
-- `services/subsystems/mock` 临时保留原型 mock 数据。
-- `services/subsystems/adapters` 做 mock 和正式 API 的切换适配，页面只调用 adapter。
-- `router/modules/subsystems.js` 可作为本地开发静态路由参考；正式生产仍建议由后端菜单返回动态路由。
+- 分系统页面优先放在 `src/views/{module}` 下，和现有 `system`、`flow`、`monitor`、`tool` 平级。
+- 分系统内部复用组件放在本分系统自己的 `components/` 中，不优先放全局 `src/components`。
+- 原型 mock 数据临时放入对应分系统的 `mock/` 或 `data/` 子目录，后续替换成 `src/api/{module}` 的正式接口。
+- 正式生产仍建议由后端菜单返回动态路由；本地静态路由只作为开发期兜底。
 
 ## 一、数据接引采报分系统
 
@@ -94,58 +95,67 @@ src/
 - 本地汇聚数据
 - 外部接入数据
 
-这些是同一分系统内的状态切换，不建议拆成大量顶级路由。
+这些是同一分系统内的状态切换，不建议拆成过多顶级目录。
 
 ### 推荐结构
 
 ```text
-src/views/subsystems/data-ingestion/
+src/views/dataIngestion/
 ├── index.vue
-└── pages/
-    ├── task-management.vue
-    ├── template-config.vue
-    ├── statistics.vue
-    ├── runtime-monitor.vue
-    ├── data-source.vue
-    └── ai-model-settings.vue
-
-src/components/subsystems/data-ingestion/
-├── domain-switch.vue
 ├── task/
-│   ├── task-panel.vue
-│   ├── task-dialog.vue
-│   └── task-category-tree.vue
+│   └── index.vue
 ├── template/
-│   └── template-panel.vue
+│   └── index.vue
 ├── statistics/
-│   └── statistics-panel.vue
+│   └── index.vue
 ├── monitor/
-│   └── monitor-panel.vue
-├── data-source/
-│   └── data-source-panel.vue
-└── ai/
-    ├── model-settings-panel.vue
-    └── assistant-panel.vue
+│   └── index.vue
+├── dataSource/
+│   └── index.vue
+├── aiSettings/
+│   └── index.vue
+├── components/
+│   ├── DomainSwitch.vue
+│   ├── TaskPanel.vue
+│   ├── TaskDialog.vue
+│   ├── TaskCategoryTree.vue
+│   ├── TemplatePanel.vue
+│   ├── StatisticsPanel.vue
+│   ├── MonitorPanel.vue
+│   ├── DataSourcePanel.vue
+│   ├── ModelSettingsPanel.vue
+│   └── AssistantPanel.vue
+├── mock/
+│   └── dataIngestionData.js
+└── types.js
+
+src/api/dataIngestion/
+├── task.js
+├── template.js
+├── statistics.js
+├── monitor.js
+├── dataSource.js
+└── aiSettings.js
 ```
 
 ### 路由建议
 
 ```text
-/data-ingestion
-/data-ingestion/tasks
-/data-ingestion/templates
-/data-ingestion/statistics
-/data-ingestion/monitor
-/data-ingestion/sources
-/data-ingestion/ai-settings
+/dataIngestion
+/dataIngestion/task
+/dataIngestion/template
+/dataIngestion/statistics
+/dataIngestion/monitor
+/dataIngestion/dataSource
+/dataIngestion/aiSettings
 ```
 
-默认进入 `/data-ingestion/tasks`。数据域通过 query 或页面状态承载，例如：
+默认进入 `/dataIngestion/task`。数据域通过 query 或页面状态承载，例如：
 
 ```text
-/data-ingestion/tasks?domain=business
-/data-ingestion/tasks?domain=local
-/data-ingestion/tasks?domain=external
+/dataIngestion/task?domain=business
+/dataIngestion/task?domain=local
+/dataIngestion/task?domain=external
 ```
 
 ## 二、数据模型分析
@@ -168,103 +178,134 @@ src/components/subsystems/data-ingestion/
 ### 推荐结构
 
 ```text
-src/views/subsystems/data-model-analysis/
+src/views/dataModelAnalysis/
 ├── index.vue
-└── pages/
-    ├── cleaning/
-    │   ├── task-management.vue
-    │   ├── component-management.vue
-    │   └── engine-monitor.vue
-    ├── assets/
-    │   ├── overview.vue
-    │   ├── catalog.vue
-    │   ├── asset-set.vue
-    │   ├── metadata.vue
-    │   ├── cataloging.vue
-    │   ├── permission.vue
-    │   └── topic-libraries.vue
-    ├── services/
-    │   ├── service-management.vue
-    │   ├── component-management.vue
-    │   ├── app-management.vue
-    │   └── approval.vue
-    ├── models/
-    │   ├── management.vue
-    │   ├── designer.vue
-    │   ├── run.vue
-    │   ├── statistics.vue
-    │   └── marketplace.vue
-    ├── settings/
-    │   ├── data-source.vue
-    │   ├── files.vue
-    │   ├── categories.vue
-    │   ├── authorization.vue
-    │   └── custom-functions.vue
-    ├── case-bill/
-    │   ├── import.vue
-    │   ├── tools.vue
-    │   ├── persons.vue
-    │   └── bank-analysis.vue
-    ├── reports/
-    │   ├── templates.vue
-    │   └── generation.vue
-    └── tools/
-        ├── form-designer.vue
-        ├── table-designer.vue
-        ├── chart-management.vue
-        ├── portal-designer.vue
-        └── ocr.vue
-
-src/components/subsystems/data-model-analysis/
 ├── cleaning/
-├── assets/
-├── services/
-├── models/
+│   ├── task/
+│   │   └── index.vue
+│   ├── component/
+│   │   └── index.vue
+│   ├── engine/
+│   │   └── index.vue
+│   └── components/
+│       ├── CleanTaskPanel.vue
+│       ├── CleanTaskDialog.vue
+│       ├── ComponentPanel.vue
+│       ├── ComponentDialog.vue
+│       └── EnginePanel.vue
+├── asset/
+│   ├── overview/
+│   │   └── index.vue
+│   ├── catalog/
+│   │   └── index.vue
+│   ├── assetSet/
+│   │   └── index.vue
+│   ├── metadata/
+│   │   └── index.vue
+│   ├── cataloging/
+│   │   └── index.vue
+│   ├── permission/
+│   │   └── index.vue
+│   └── topicLibrary/
+│       └── index.vue
+├── dataService/
+│   ├── service/
+│   │   └── index.vue
+│   ├── component/
+│   │   └── index.vue
+│   ├── app/
+│   │   └── index.vue
+│   └── approval/
+│       └── index.vue
+├── model/
+│   ├── management/
+│   │   └── index.vue
+│   ├── designer/
+│   │   └── index.vue
+│   ├── run/
+│   │   └── index.vue
+│   ├── statistics/
+│   │   └── index.vue
+│   └── market/
+│       └── index.vue
 ├── settings/
-├── case-bill/
-├── reports/
-└── tools/
+│   ├── dataSource/
+│   ├── fileData/
+│   ├── category/
+│   ├── authorization/
+│   └── customFunction/
+├── caseBill/
+│   ├── import/
+│   ├── tools/
+│   ├── person/
+│   └── bankAnalysis/
+├── report/
+│   ├── template/
+│   └── generate/
+├── tools/
+│   ├── formDesigner/
+│   ├── tableDesigner/
+│   ├── chart/
+│   ├── portalDesigner/
+│   └── ocr/
+├── components/
+│   └── common panels...
+├── mock/
+│   └── dataModelAnalysisData.js
+└── types.js
+
+src/api/dataModelAnalysis/
+├── cleaning.js
+├── asset.js
+├── dataService.js
+├── model.js
+├── settings.js
+├── caseBill.js
+├── report.js
+└── tools.js
 ```
+
+说明：上面省略的末级目录都按 `index.vue` 补齐，例如 `settings/dataSource/index.vue`、`caseBill/bankAnalysis/index.vue`。
 
 ### 路由建议
 
 ```text
-/data-model-analysis
-/data-model-analysis/cleaning/tasks
-/data-model-analysis/cleaning/components
-/data-model-analysis/cleaning/engine
-/data-model-analysis/assets/overview
-/data-model-analysis/assets/catalog
-/data-model-analysis/assets/asset-sets
-/data-model-analysis/assets/metadata
-/data-model-analysis/assets/cataloging
-/data-model-analysis/assets/permissions
-/data-model-analysis/assets/topic-libraries
-/data-model-analysis/services/management
-/data-model-analysis/services/components
-/data-model-analysis/services/apps
-/data-model-analysis/services/approvals
-/data-model-analysis/models/management
-/data-model-analysis/models/designer
-/data-model-analysis/models/runs
-/data-model-analysis/models/statistics
-/data-model-analysis/models/marketplace
-/data-model-analysis/settings/data-sources
-/data-model-analysis/settings/files
-/data-model-analysis/settings/categories
-/data-model-analysis/settings/authorization
-/data-model-analysis/settings/functions
-/data-model-analysis/case-bill/import
-/data-model-analysis/case-bill/tools
-/data-model-analysis/case-bill/persons
-/data-model-analysis/case-bill/bank-analysis
-/data-model-analysis/reports/templates
-/data-model-analysis/reports/generation
-/data-model-analysis/tools/form-designer
-/data-model-analysis/tools/table-designer
-/data-model-analysis/tools/charts
-/data-model-analysis/tools/portal-designer
-/data-model-analysis/tools/ocr
+/dataModelAnalysis
+/dataModelAnalysis/cleaning/task
+/dataModelAnalysis/cleaning/component
+/dataModelAnalysis/cleaning/engine
+/dataModelAnalysis/asset/overview
+/dataModelAnalysis/asset/catalog
+/dataModelAnalysis/asset/assetSet
+/dataModelAnalysis/asset/metadata
+/dataModelAnalysis/asset/cataloging
+/dataModelAnalysis/asset/permission
+/dataModelAnalysis/asset/topicLibrary
+/dataModelAnalysis/dataService/service
+/dataModelAnalysis/dataService/component
+/dataModelAnalysis/dataService/app
+/dataModelAnalysis/dataService/approval
+/dataModelAnalysis/model/management
+/dataModelAnalysis/model/designer
+/dataModelAnalysis/model/run
+/dataModelAnalysis/model/statistics
+/dataModelAnalysis/model/market
+/dataModelAnalysis/settings/dataSource
+/dataModelAnalysis/settings/fileData
+/dataModelAnalysis/settings/category
+/dataModelAnalysis/settings/authorization
+/dataModelAnalysis/settings/customFunction
+/dataModelAnalysis/caseBill/import
+/dataModelAnalysis/caseBill/tools
+/dataModelAnalysis/caseBill/person
+/dataModelAnalysis/caseBill/bankAnalysis
+/dataModelAnalysis/report/template
+/dataModelAnalysis/report/generate
+/dataModelAnalysis/tools/formDesigner
+/dataModelAnalysis/tools/tableDesigner
+/dataModelAnalysis/tools/chart
+/dataModelAnalysis/tools/portalDesigner
+/dataModelAnalysis/tools/ocr
 ```
 
 ## 三、智慧监管应用分系统
@@ -286,95 +327,110 @@ src/components/subsystems/data-model-analysis/
 ### 推荐结构
 
 ```text
-src/views/subsystems/smart-supervision/
+src/views/smartSupervision/
 ├── index.vue
-└── pages/
-    ├── project-construction/
-    │   ├── overview.vue
-    │   ├── project-list.vue
-    │   ├── risk-management.vue
-    │   ├── tracking.vue
-    │   ├── profile.vue
-    │   ├── issue-handling.vue
-    │   └── work-supervision.vue
-    ├── procurement/
-    │   ├── overview.vue
-    │   ├── procurement-list.vue
-    │   ├── risk-warning.vue
-    │   ├── risk-handling.vue
-    │   └── expert-management.vue
-    ├── inspection-rectification/
-    │   ├── problem-import.vue
-    │   ├── rectify-publish.vue
-    │   └── rectify-assessment.vue
-    ├── case-archive/
-    │   ├── overview.vue
-    │   ├── clue-source-analysis.vue
-    │   ├── search.vue
-    │   └── bill-analysis.vue
-    ├── integrity-info/
-    │   ├── basic-info.vue
-    │   ├── person-portrait.vue
-    │   ├── policy.vue
-    │   ├── business-online.vue
-    │   ├── supervision-guard.vue
-    │   ├── clue-handling.vue
-    │   ├── access-trace.vue
-    │   ├── risk-assessment.vue
-    │   └── integrity-review.vue
-    └── entity-hub/
-        ├── overview.vue
-        ├── project-hub.vue
-        ├── person-hub.vue
-        └── event-hub.vue
-
-src/components/subsystems/smart-supervision/
-├── shared/
-│   ├── supervised-model-drawer.vue
-│   └── risk-assessment-panel.vue
-├── project-construction/
-│   ├── flow-chart.vue
-│   ├── action-compliance-table.vue
-│   └── work-monitors/
+├── project/
+│   ├── overview/
+│   │   └── index.vue
+│   ├── list/
+│   │   └── index.vue
+│   ├── risk/
+│   │   └── index.vue
+│   ├── tracking/
+│   │   └── index.vue
+│   ├── profile/
+│   │   ├── index.vue
+│   │   └── projectProfileDialog.vue
+│   ├── issueHandle/
+│   │   └── index.vue
+│   ├── workSupervision/
+│   │   └── index.vue
+│   └── components/
+│       ├── FlowChart.vue
+│       ├── RiskAssessmentPanel.vue
+│       └── ActionComplianceTable.vue
 ├── procurement/
-├── inspection-rectification/
-├── case-archive/
-├── integrity-info/
-└── entity-hub/
+│   ├── overview/
+│   ├── list/
+│   ├── risk/
+│   ├── handle/
+│   ├── expert/
+│   └── components/
+├── inspection/
+│   ├── problemImport/
+│   ├── rectifyPublish/
+│   └── rectifyAssessment/
+├── caseArchive/
+│   ├── overview/
+│   ├── clueAnalysis/
+│   ├── search/
+│   └── billAnalysis/
+├── integrityInfo/
+│   ├── basic/
+│   ├── personPortrait/
+│   ├── policy/
+│   ├── businessOnline/
+│   ├── guard/
+│   ├── clueHandle/
+│   ├── accessTrace/
+│   ├── riskAssessment/
+│   └── integrityReview/
+├── entityHub/
+│   ├── overview/
+│   ├── project/
+│   ├── person/
+│   └── event/
+├── components/
+│   ├── SupervisedModelDrawer.vue
+│   └── SupervisedModelPanel.vue
+├── mock/
+│   └── smartSupervisionData.js
+└── types.js
+
+src/api/smartSupervision/
+├── project.js
+├── procurement.js
+├── inspection.js
+├── caseArchive.js
+├── integrityInfo.js
+├── entityHub.js
+└── model.js
 ```
+
+说明：`procurement/*`、`inspection/*`、`caseArchive/*`、`integrityInfo/*`、`entityHub/*` 的每个路由目录都补 `index.vue`。
 
 ### 路由建议
 
 ```text
-/smart-supervision
-/smart-supervision/projects/overview
-/smart-supervision/projects/list
-/smart-supervision/projects/risks
-/smart-supervision/projects/tracking
-/smart-supervision/projects/profile/:projectId
-/smart-supervision/projects/issues
-/smart-supervision/projects/work-supervision
-/smart-supervision/procurement/overview
-/smart-supervision/procurement/list
-/smart-supervision/procurement/risks
-/smart-supervision/procurement/handling
-/smart-supervision/procurement/experts
-/smart-supervision/inspection/import
-/smart-supervision/inspection/publish
-/smart-supervision/inspection/assessment
-/smart-supervision/cases/overview
-/smart-supervision/cases/clue-analysis
-/smart-supervision/cases/search
-/smart-supervision/cases/bill-analysis
-/smart-supervision/integrity-info/basic
-/smart-supervision/integrity-info/person-portrait
-/smart-supervision/integrity-info/policy
-/smart-supervision/integrity-info/business-online
-/smart-supervision/integrity-info/guard
-/smart-supervision/entity-hub/overview
-/smart-supervision/entity-hub/projects/:projectId
-/smart-supervision/entity-hub/persons/:personId
-/smart-supervision/entity-hub/events
+/smartSupervision
+/smartSupervision/project/overview
+/smartSupervision/project/list
+/smartSupervision/project/risk
+/smartSupervision/project/tracking
+/smartSupervision/project/profile/:projectId
+/smartSupervision/project/issueHandle
+/smartSupervision/project/workSupervision
+/smartSupervision/procurement/overview
+/smartSupervision/procurement/list
+/smartSupervision/procurement/risk
+/smartSupervision/procurement/handle
+/smartSupervision/procurement/expert
+/smartSupervision/inspection/problemImport
+/smartSupervision/inspection/rectifyPublish
+/smartSupervision/inspection/rectifyAssessment
+/smartSupervision/caseArchive/overview
+/smartSupervision/caseArchive/clueAnalysis
+/smartSupervision/caseArchive/search
+/smartSupervision/caseArchive/billAnalysis
+/smartSupervision/integrityInfo/basic
+/smartSupervision/integrityInfo/personPortrait
+/smartSupervision/integrityInfo/policy
+/smartSupervision/integrityInfo/businessOnline
+/smartSupervision/integrityInfo/guard
+/smartSupervision/entityHub/overview
+/smartSupervision/entityHub/project/:projectId
+/smartSupervision/entityHub/person/:personId
+/smartSupervision/entityHub/event
 ```
 
 ## 四、廉政态势展示分系统
@@ -394,39 +450,51 @@ src/components/subsystems/smart-supervision/
 ### 推荐结构
 
 ```text
-src/views/subsystems/integrity-situation/
+src/views/integritySituation/
 ├── index.vue
-└── pages/
-    ├── overview.vue
-    ├── rectification-effect.vue
-    ├── personalized-query.vue
-    ├── alert-center.vue
-    └── supervision-tasks.vue
-
-src/components/subsystems/integrity-situation/
-├── layout/
-│   ├── situation-header.vue
-│   ├── situation-tabs.vue
-│   └── situation-status-bar.vue
 ├── overview/
+│   └── index.vue
 ├── rectification/
+│   └── index.vue
 ├── query/
-├── alerts/
-└── tasks/
+│   └── index.vue
+├── alert/
+│   └── index.vue
+├── task/
+│   └── index.vue
+├── components/
+│   ├── SituationHeader.vue
+│   ├── SituationTabs.vue
+│   ├── SituationStatusBar.vue
+│   ├── OverviewPanel.vue
+│   ├── RectificationPanel.vue
+│   ├── QueryPanel.vue
+│   ├── AlertCenterPanel.vue
+│   └── SuperviseTaskPanel.vue
+├── mock/
+│   └── integritySituationData.js
+└── types.js
+
+src/api/integritySituation/
+├── overview.js
+├── rectification.js
+├── query.js
+├── alert.js
+└── task.js
 ```
 
 ### 路由建议
 
 ```text
-/integrity-situation
-/integrity-situation/overview
-/integrity-situation/rectification
-/integrity-situation/query
-/integrity-situation/alerts
-/integrity-situation/tasks
+/integritySituation
+/integritySituation/overview
+/integritySituation/rectification
+/integritySituation/query
+/integritySituation/alert
+/integritySituation/task
 ```
 
-内部 tab 可同步到路由，便于刷新、收藏和后端菜单定位。
+内部 tab 应同步到路由，便于刷新、收藏和后端菜单定位。
 
 ## 五、系统安全管理分系统
 
@@ -477,24 +545,38 @@ src/views/tool/
 └── build/
 ```
 
-如需补充原型中正式前端缺失的安全管理页面，再放入：
+如需补充原型中正式前端缺失的安全管理页面，再按正式前端风格新增：
 
 ```text
-src/views/subsystems/security-management/
-└── pages/
-    ├── organization-units.vue
-    ├── permission-policy.vue
-    ├── data-sources.vue
-    ├── file-management.vue
-    ├── role-permissions.vue
-    └── audit-overview.vue
+src/views/securityManagement/
+├── index.vue
+├── unit/
+│   └── index.vue
+├── permissionPolicy/
+│   └── index.vue
+├── dataSource/
+│   └── index.vue
+├── file/
+│   └── index.vue
+├── rolePermission/
+│   └── index.vue
+├── audit/
+│   └── index.vue
+└── components/
+    ├── UnitPanel.vue
+    ├── PermissionPolicyPanel.vue
+    ├── DataSourcePanel.vue
+    ├── FilePanel.vue
+    ├── RolePermissionPanel.vue
+    └── AuditPanel.vue
 
-src/components/subsystems/security-management/
-├── organization/
-├── permissions/
-├── data-sources/
-├── files/
-└── audit/
+src/api/securityManagement/
+├── unit.js
+├── permissionPolicy.js
+├── dataSource.js
+├── file.js
+├── rolePermission.js
+└── audit.js
 ```
 
 ### 路由建议
@@ -516,48 +598,45 @@ src/components/subsystems/security-management/
 新增页面才使用：
 
 ```text
-/security-management/units
-/security-management/permissions/policy
-/security-management/data-sources
-/security-management/files
-/security-management/role-permissions
-/security-management/audit
+/securityManagement/unit
+/securityManagement/permissionPolicy
+/securityManagement/dataSource
+/securityManagement/file
+/securityManagement/rolePermission
+/securityManagement/audit
 ```
 
 ## 公共能力规划
 
-跨分系统共享能力不要放进某个业务分系统：
+跨分系统共享能力尽量先模块内局部复用，确认多个分系统都用到后，再提升到全局组件。正式前端已有全局组件目录，应遵守现有 PascalCase 目录风格：
 
 ```text
-src/components/subsystems/common/
-├── charts/
-├── query/
-├── risk/
-├── status/
-├── tables/
-└── workflow/
-
-src/services/subsystems/adapters/
-├── data-ingestion-adapter.js
-├── data-model-analysis-adapter.js
-├── smart-supervision-adapter.js
-├── integrity-situation-adapter.js
-└── security-management-adapter.js
-
-src/services/subsystems/mock/
-├── data-ingestion.mock.js
-├── data-model-analysis.mock.js
-├── smart-supervision.mock.js
-├── integrity-situation.mock.js
-└── security-management.mock.js
-
-src/data/subsystems/
-├── reference-data.js
-├── dashboard-data.js
-└── situation-data.js
+src/components/
+├── ChartPanel/
+├── RiskTag/
+├── StatusBadge/
+└── ...
 ```
 
-原型中的 `dataCollection`、`dataAnalysis`、`dataSupervision`、态势聚合服务建议迁移为 adapter 层，不直接进入页面：
+临时 mock 和适配层建议先放在各分系统内部：
+
+```text
+src/views/dataIngestion/mock/
+src/views/dataModelAnalysis/mock/
+src/views/smartSupervision/mock/
+src/views/integritySituation/mock/
+```
+
+后续正式接口稳定后，页面统一改为调用：
+
+```text
+src/api/dataIngestion/
+src/api/dataModelAnalysis/
+src/api/smartSupervision/
+src/api/integritySituation/
+```
+
+原型中的 `dataCollection`、`dataAnalysis`、`dataSupervision`、态势聚合服务建议迁移为各分系统内部临时 adapter，不直接进入页面：
 
 - 数据接引采报：提供原始数据和接入任务。
 - 数据模型分析：提供清洗、资产、模型、分析结果。
@@ -569,30 +648,30 @@ src/data/subsystems/
 正式前端动态菜单的 `component` 路径应指向 `src/views` 下相对路径，例如：
 
 ```text
-subsystems/data-ingestion/pages/task-management
-subsystems/data-model-analysis/pages/assets/overview
-subsystems/smart-supervision/pages/project-construction/overview
-subsystems/integrity-situation/pages/overview
+dataIngestion/task/index
+dataModelAnalysis/asset/overview/index
+smartSupervision/project/overview/index
+integritySituation/overview/index
 system/user/index
 ```
 
-其中系统安全管理已有页面继续使用现有路径，不强行搬到 `subsystems/security-management`。
+其中系统安全管理已有页面继续使用现有路径，不强行搬到 `securityManagement`。
 
 ## 第一阶段建议落地范围
 
 第一阶段只做“结构骨架 + 五个分系统入口”，不要一次性迁所有面板：
 
 ```text
-src/views/portal/index.vue
-src/views/subsystems/data-ingestion/index.vue
-src/views/subsystems/data-model-analysis/index.vue
-src/views/subsystems/smart-supervision/index.vue
-src/views/subsystems/integrity-situation/index.vue
-src/views/subsystems/security-management/index.vue
-src/router/modules/subsystems.js
-src/components/subsystems/common/
-src/services/subsystems/adapters/
-src/services/subsystems/mock/
+src/views/index.vue
+src/views/dataIngestion/index.vue
+src/views/dataModelAnalysis/index.vue
+src/views/smartSupervision/index.vue
+src/views/integritySituation/index.vue
+src/views/securityManagement/index.vue
+src/api/dataIngestion/
+src/api/dataModelAnalysis/
+src/api/smartSupervision/
+src/api/integritySituation/
 ```
 
 验收目标：

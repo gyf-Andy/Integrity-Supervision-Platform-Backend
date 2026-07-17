@@ -1,0 +1,12 @@
+{
+  "id": "align-migration-plan-frontend-naming",
+  "title": "按正式前端命名风格修订迁移计划",
+  "status": "completed",
+  "complexity": "S",
+  "risk": "low",
+  "domain": "frontend",
+  "currentPhase": "completed",
+  "nextAction": "归档任务",
+  "createdAt": "2026-07-17T00:00:00Z",
+  "branch": "master"
+}
