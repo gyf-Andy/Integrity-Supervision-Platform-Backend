@@ -1,0 +1,12 @@
+{
+  "id": "execute-smart-supervision-migration",
+  "title": "执行原型迁移第一阶段：智慧监管应用分系统",
+  "status": "completed",
+  "complexity": "L",
+  "risk": "medium",
+  "domain": "frontend",
+  "currentPhase": "completed",
+  "nextAction": "归档任务并提交",
+  "createdAt": "2026-07-17T14:08:00+08:00",
+  "branch": "master"
+}
