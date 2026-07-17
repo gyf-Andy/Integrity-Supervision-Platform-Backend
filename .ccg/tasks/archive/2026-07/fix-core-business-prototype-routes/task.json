@@ -1,0 +1,12 @@
+{
+  "id": "fix-core-business-prototype-routes",
+  "title": "修正核心监管业务跳转到原型业务页面",
+  "status": "completed",
+  "complexity": "M",
+  "risk": "medium",
+  "domain": "frontend",
+  "currentPhase": "completed",
+  "nextAction": "归档任务",
+  "createdAt": "2026-07-17T15:45:00+08:00",
+  "branch": "master"
+}

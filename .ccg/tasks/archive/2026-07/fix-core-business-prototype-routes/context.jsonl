@@ -1,0 +1,11 @@
+{"repo":"frontend","path":"src/views/index.vue","reason":"首页核心监管业务卡片与快捷入口路径"}
+{"repo":"frontend","path":"src/router/index.js","reason":"正式前端路由表与系统安全管理 Layout 挂载点"}
+{"repo":"frontend","path":"src/views/smartSupervision/app/index.vue","reason":"新增智慧监管应用分系统原型风格承载页"}
+{"repo":"frontend","path":"src/views/smartSupervision/project/index.vue","reason":"项目监督现有业务页"}
+{"repo":"frontend","path":"src/views/smartSupervision/procurement/index.vue","reason":"招标采购监督现有业务页"}
+{"repo":"frontend","path":"src/views/smartSupervision/inspection/index.vue","reason":"巡视整改监督现有业务页"}
+{"repo":"frontend","path":"src/views/smartSupervision/caseArchive/index.vue","reason":"案件档案管理现有业务页"}
+{"repo":"frontend","path":"src/views/smartSupervision/integrityInfo/index.vue","reason":"监督信息管理现有业务页"}
+{"repo":"prototype","path":"D:/CodeProject/antigraviry_repository/lz/src/router/index.ts","reason":"原型业务路由路径参考"}
+{"repo":"prototype","path":"D:/CodeProject/antigraviry_repository/lz/src/views/SuperviseApp.vue","reason":"原型业务内容承载逻辑参考"}
+{"repo":"prototype","path":"D:/CodeProject/antigraviry_repository/lz/src/components/AppLayout.vue","reason":"原型顶部导航和左侧子菜单布局参考"}
