@@ -1,0 +1,12 @@
+{
+  "id": "replan-subsystem-file-structure",
+  "title": "按五个分系统重新规划原型迁移文件结构",
+  "status": "completed",
+  "complexity": "L+",
+  "risk": "medium",
+  "domain": "frontend",
+  "currentPhase": "completed",
+  "nextAction": "归档任务",
+  "createdAt": "2026-07-17T00:00:00Z",
+  "branch": "master"
+}

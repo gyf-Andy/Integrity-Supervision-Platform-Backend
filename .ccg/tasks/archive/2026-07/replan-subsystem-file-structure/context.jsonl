@@ -1,0 +1,8 @@
+{"path":"D:\\CodeProject\\antigraviry_repository\\lz\\src\\router\\index.ts","reason":"原型路由和五个分系统入口"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\lz\\src\\components\\AppLayout.vue","reason":"原型顶部导航和智慧监管应用子菜单"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\lz\\src\\views\\DataAccess.vue","reason":"数据接引采报分系统内部菜单和数据域切换"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\lz\\src\\views\\DataModel.vue","reason":"数据模型分析分系统内部菜单和组件映射"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\lz\\src\\views\\SuperviseApp.vue","reason":"智慧监管应用分系统路由到组件映射"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\lz\\src\\views\\LzSituation.vue","reason":"态势展示分系统 tab 切换逻辑，仅作为原型源文件引用"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\lz\\src\\views\\SystemSecurity.vue","reason":"系统安全管理分系统原型菜单，与正式前端现有系统管理对照"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\Integrity-Supervision-Platform-Backend\\.ccg\\tasks\\archive\\2026-07\\plan-prototype-migration\\plan.md","reason":"被重写的迁移规划文档"}
