@@ -1,0 +1,12 @@
+{
+  "id": "plan-prototype-migration",
+  "title": "规划将原型整体迁移到正式前端",
+  "status": "completed",
+  "complexity": "L+",
+  "risk": "medium",
+  "domain": "frontend",
+  "currentPhase": "completed",
+  "nextAction": "归档任务",
+  "createdAt": "2026-07-17T00:00:00Z",
+  "branch": "master"
+}

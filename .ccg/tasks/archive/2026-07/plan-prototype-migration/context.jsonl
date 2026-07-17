@@ -1,0 +1,8 @@
+{"path":"D:\\CodeProject\\antigraviry_repository\\Integrity-Supervision-Platform-Frontend\\src\\layout\\index.vue","reason":"正式前端主布局"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\Integrity-Supervision-Platform-Frontend\\src\\router\\index.js","reason":"正式前端静态路由和动态路由补充点"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\Integrity-Supervision-Platform-Frontend\\src\\store\\modules\\permission.js","reason":"后端菜单 component 到前端 views 的映射规则"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\Integrity-Supervision-Platform-Frontend\\src\\utils\\request.js","reason":"正式前端统一 API 请求封装"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\lz\\src\\router\\index.ts","reason":"原型路由清单"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\lz\\src\\components\\AppLayout.vue","reason":"原型顶部导航和业务布局"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\lz\\src\\services","reason":"原型 mock/service 数据来源"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\lz\\src\\views","reason":"原型页面模块来源"}
