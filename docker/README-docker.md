@@ -32,7 +32,7 @@
 docker/
 ├── .env.example              # 环境变量配置模板（使用前复制为 .env）
 ├── Dockerfile.java17         # 后端服务通用 Java 17 运行镜像模板
-├── docker-compose.infra.yml  # 基础设施 Compose（Nacos, Redis, 可选达梦）
+├── docker-compose.infra.yml  # 基础设施 Compose（Nacos, Redis, Sentinel, MinIO，dm 可选）
 ├── docker-compose.apps.yml   # 业务服务 Compose（各微服务、Nginx）
 ├── nacos/                    # Nacos 配置及数据库插件挂载
 ├── redis/                    # Redis 配置文件挂载
@@ -42,7 +42,7 @@ docker/
 ### 1. 基础设施 Compose (`docker-compose.infra.yml`)
 *   **Nacos**：作为注册与配置中心，挂载了自定义的 `application.properties`。
 *   **Redis**：挂载了本地的 `redis.conf`。
-*   **达梦数据库 (dm)**：内置了 `dm8_single` 的占位配置，通过 `profiles: - dm` 声明。如需在 Compose 内运行达梦，启动时增加该 profile 即可。
+*   **达梦数据库**：默认使用宿主机本地达梦数据库，容器内服务通过 `host.docker.internal:5236` 访问；如需容器内达梦，可显式启用 `dm` profile。
 
 ### 2. 业务应用 Compose (`docker-compose.apps.yml`)
 *   定义了所有微服务容器，全部使用 YAML 锚点（`&app-defaults` 和 `&app-common-env`）来共享配置与容器依赖。
@@ -67,7 +67,7 @@ Nacos 配置库默认使用达梦数据库进行存储：
 ### 5. 通用 Dockerfile (`Dockerfile.java17`)
 为了避免每个微服务重复维护 Dockerfile，项目采用参数化的 `Dockerfile.java17`：
 ```dockerfile
-ARG JAVA17_IMAGE=eclipse-temurin:17-jre
+ARG JAVA17_IMAGE=eclipse-temurin:17-jdk
 FROM ${JAVA17_IMAGE}
 WORKDIR /app
 ARG JAR_FILE
@@ -87,7 +87,11 @@ ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -jar /app/app.jar"]
 ```bash
 cp docker/.env.example docker/.env
 ```
-根据本地环境，修改 `docker/.env` 中的 `DM_HOST`（达梦数据库 IP）、`REDIS_PASSWORD` 等信息。
+默认使用宿主机本地达梦数据库，`docker/.env` 中的 `DM_HOST` 默认为 `host.docker.internal`。请先确保本地达梦已启动、监听 `5236`，并已导入 `sql/` 目录中的初始化脚本。如需连接其他机器上的达梦数据库，可修改 `DM_HOST` 为数据库 IP；如需改回 Compose 内达梦容器，可设置 `COMPOSE_PROFILES=dm`、将 `DM_HOST` 改为 `dm`，并提前准备 `DM_IMAGE` 指向的镜像。
+
+本地开发默认关闭 Nacos 鉴权：`NACOS_AUTH_ENABLE=false`，`NACOS_USERNAME` 与 `NACOS_PASSWORD` 保持为空。只有在明确启用 Nacos 鉴权时，才填写这两个账号密码变量；否则客户端会尝试调用登录接口，容易在 Nacos 3.x 或启动早期产生无意义的登录错误日志。生产环境必须开启 Nacos 鉴权，并修改默认账号、密码和 `NACOS_AUTH_TOKEN`。
+
+Sentinel 的 Nacos 规则源只配置在 `integrity-gateway` 上，其他业务服务仅连接 Sentinel Dashboard，避免非网关服务加载不完整的 `ds1` 数据源。
 
 ### 2. 编译项目 Jar 包
 ```bash
@@ -95,13 +99,17 @@ mvn -DskipTests clean package
 ```
 
 ### 3. 运行容器服务
-*   **仅启动基础设施（Nacos + Redis）**：
+*   **仅启动基础设施（Nacos + Redis + Sentinel + MinIO，达梦使用宿主机本地服务）**：
     ```bash
     docker compose --env-file docker/.env -f docker/docker-compose.infra.yml up -d
     ```
 *   **启动基础设施及所有业务模块**：
     ```bash
     docker compose --env-file docker/.env -f docker/docker-compose.infra.yml -f docker/docker-compose.apps.yml up -d
+    ```
+    Nacos 首次启动可能需要约 1 分钟才开放 API。如果业务模块日志中出现短暂的 `Client not connected` 或 `Connection refused`，等 Nacos ready 后重启业务模块即可：
+    ```bash
+    docker compose --env-file docker/.env -f docker/docker-compose.infra.yml -f docker/docker-compose.apps.yml up -d --force-recreate integrity-gateway integrity-auth integrity-system integrity-gen integrity-job integrity-flow integrity-file integrity-monitor
     ```
 *   **只重建并启动某个特定模块（例如：integrity-flow）**：
     ```bash

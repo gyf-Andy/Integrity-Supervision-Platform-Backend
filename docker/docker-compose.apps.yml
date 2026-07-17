@@ -7,12 +7,15 @@ include:
 
 x-app-common-env: &app-common-env
   JAVA_OPTS: ${JAVA_OPTS:-}
-  NACOS_USERNAME: ${NACOS_USERNAME:-nacos}
-  NACOS_PASSWORD: ${NACOS_PASSWORD:-nacos}
+  NACOS_USERNAME: ${NACOS_USERNAME:-}
+  NACOS_PASSWORD: ${NACOS_PASSWORD:-}
   SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR: ${NACOS_SERVER_ADDR:-nacos:8848}
+  SPRING_CLOUD_NACOS_DISCOVERY_USERNAME: ${NACOS_USERNAME:-}
+  SPRING_CLOUD_NACOS_DISCOVERY_PASSWORD: ${NACOS_PASSWORD:-}
   SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR: ${NACOS_SERVER_ADDR:-nacos:8848}
+  SPRING_CLOUD_NACOS_CONFIG_USERNAME: ${NACOS_USERNAME:-}
+  SPRING_CLOUD_NACOS_CONFIG_PASSWORD: ${NACOS_PASSWORD:-}
   SPRING_CLOUD_SENTINEL_TRANSPORT_DASHBOARD: ${SENTINEL_DASHBOARD:-host.docker.internal:8718}
-  SPRING_CLOUD_SENTINEL_DATASOURCE_DS1_NACOS_SERVER_ADDR: ${NACOS_SERVER_ADDR:-nacos:8848}
   SPRING_DATA_REDIS_HOST: ${REDIS_HOST:-redis}
   SPRING_DATA_REDIS_PORT: ${REDIS_PORT:-6379}
   SPRING_DATA_REDIS_PASSWORD: ${REDIS_PASSWORD:-}
@@ -41,8 +44,10 @@ x-app-defaults: &app-defaults
   networks:
     - integrity-net
   depends_on:
-    - nacos
-    - redis
+    nacos:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
 
 services:
   integrity-gateway:
@@ -54,9 +59,16 @@ services:
       dockerfile: docker/Dockerfile.java17
       args:
         JAR_FILE: integrity-gateway/target/integrity-gateway.jar
-        JAVA17_IMAGE: ${JAVA17_IMAGE:-eclipse-temurin:17-jre}
+        JAVA17_IMAGE: ${JAVA17_IMAGE:-eclipse-temurin:17-jdk}
     environment:
       <<: *app-common-env
+      SPRING_CLOUD_SENTINEL_DATASOURCE_DS1_NACOS_SERVER_ADDR: ${NACOS_SERVER_ADDR:-nacos:8848}
+      SPRING_CLOUD_SENTINEL_DATASOURCE_DS1_NACOS_USERNAME: ${NACOS_USERNAME:-}
+      SPRING_CLOUD_SENTINEL_DATASOURCE_DS1_NACOS_PASSWORD: ${NACOS_PASSWORD:-}
+      SPRING_CLOUD_SENTINEL_DATASOURCE_DS1_NACOS_DATA_ID: sentinel-integrity-gateway
+      SPRING_CLOUD_SENTINEL_DATASOURCE_DS1_NACOS_GROUP_ID: DEFAULT_GROUP
+      SPRING_CLOUD_SENTINEL_DATASOURCE_DS1_NACOS_DATA_TYPE: json
+      SPRING_CLOUD_SENTINEL_DATASOURCE_DS1_NACOS_RULE_TYPE: gw-flow
     ports:
       - "8080:8080"
 
@@ -69,7 +81,7 @@ services:
       dockerfile: docker/Dockerfile.java17
       args:
         JAR_FILE: integrity-auth/target/integrity-auth.jar
-        JAVA17_IMAGE: ${JAVA17_IMAGE:-eclipse-temurin:17-jre}
+        JAVA17_IMAGE: ${JAVA17_IMAGE:-eclipse-temurin:17-jdk}
     environment:
       <<: *app-common-env
     ports:
@@ -84,7 +96,7 @@ services:
       dockerfile: docker/Dockerfile.java17
       args:
         JAR_FILE: integrity-modules/integrity-system/target/integrity-modules-system.jar
-        JAVA17_IMAGE: ${JAVA17_IMAGE:-eclipse-temurin:17-jre}
+        JAVA17_IMAGE: ${JAVA17_IMAGE:-eclipse-temurin:17-jdk}
     environment:
       <<: *app-common-env
       DM_DATABASE: ${DM_DATABASE:-INTEGRITY-CLOUD}
@@ -101,7 +113,7 @@ services:
       dockerfile: docker/Dockerfile.java17
       args:
         JAR_FILE: integrity-modules/integrity-gen/target/integrity-modules-gen.jar
-        JAVA17_IMAGE: ${JAVA17_IMAGE:-eclipse-temurin:17-jre}
+        JAVA17_IMAGE: ${JAVA17_IMAGE:-eclipse-temurin:17-jdk}
     environment:
       <<: *app-common-env
       DM_DATABASE: ${DM_DATABASE:-INTEGRITY-CLOUD}
@@ -118,7 +130,7 @@ services:
       dockerfile: docker/Dockerfile.java17
       args:
         JAR_FILE: integrity-modules/integrity-job/target/integrity-modules-job.jar
-        JAVA17_IMAGE: ${JAVA17_IMAGE:-eclipse-temurin:17-jre}
+        JAVA17_IMAGE: ${JAVA17_IMAGE:-eclipse-temurin:17-jdk}
     environment:
       <<: *app-common-env
       DM_DATABASE: ${DM_DATABASE:-INTEGRITY-CLOUD}
@@ -135,7 +147,7 @@ services:
       dockerfile: docker/Dockerfile.java17
       args:
         JAR_FILE: integrity-modules/integrity-flow/target/integrity-flow.jar
-        JAVA17_IMAGE: ${JAVA17_IMAGE:-eclipse-temurin:17-jre}
+        JAVA17_IMAGE: ${JAVA17_IMAGE:-eclipse-temurin:17-jdk}
     environment:
       <<: *app-common-env
       DM_DATABASE: ${DM_FLOW_DATABASE:-INTEGRITY-CLOUD-FLOW}
@@ -146,10 +158,14 @@ services:
   integrity-file:
     <<: *app-defaults
     depends_on:
-      - nacos
-      - redis
-      - minio
-      - minio-init
+      nacos:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_started
+      minio-init:
+        condition: service_completed_successfully
     image: ${IMAGE_PREFIX:-integrity}/file:${IMAGE_TAG:-dev}
     container_name: ${COMPOSE_PROJECT_NAME:-integrity}-file
     build:
@@ -157,7 +173,7 @@ services:
       dockerfile: docker/Dockerfile.java17
       args:
         JAR_FILE: integrity-modules/integrity-file/target/integrity-modules-file.jar
-        JAVA17_IMAGE: ${JAVA17_IMAGE:-eclipse-temurin:17-jre}
+        JAVA17_IMAGE: ${JAVA17_IMAGE:-eclipse-temurin:17-jdk}
     environment:
       <<: *app-common-env
     ports:
@@ -172,7 +188,7 @@ services:
       dockerfile: docker/Dockerfile.java17
       args:
         JAR_FILE: integrity-visual/integrity-monitor/target/integrity-visual-monitor.jar
-        JAVA17_IMAGE: ${JAVA17_IMAGE:-eclipse-temurin:17-jre}
+        JAVA17_IMAGE: ${JAVA17_IMAGE:-eclipse-temurin:17-jdk}
     environment:
       <<: *app-common-env
     ports:

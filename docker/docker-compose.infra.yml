@@ -3,18 +3,19 @@ name: ${COMPOSE_PROJECT_NAME:-integrity}
 services:
   nacos:
     image: ${NACOS_IMAGE:-nacos/nacos-server:latest}
+    pull_policy: if_not_present
     container_name: ${COMPOSE_PROJECT_NAME:-integrity}-nacos
     restart: unless-stopped
     environment:
       MODE: standalone
-      NACOS_AUTH_ENABLE: "true"
-      NACOS_AUTH_TOKEN: ${NACOS_AUTH_TOKEN:-U2VjcmV0S2V5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5}
+      NACOS_AUTH_ENABLE: ${NACOS_AUTH_ENABLE:-false}
+      NACOS_AUTH_TOKEN: ${NACOS_AUTH_TOKEN}
       NACOS_AUTH_IDENTITY_KEY: ${NACOS_AUTH_IDENTITY_KEY:-serverIdentity}
       NACOS_AUTH_IDENTITY_VALUE: ${NACOS_AUTH_IDENTITY_VALUE:-security}
       DM_HOST: ${DM_HOST:-host.docker.internal}
       DM_PORT: ${DM_PORT:-5236}
       DM_CONFIG_DATABASE: ${DM_CONFIG_DATABASE:-INTEGRITY-CONFIG}
-      DM_SCHEMA: ${DM_CONFIG_SCHEMA:-SYSDBA}
+      DM_CONFIG_SCHEMA: ${DM_CONFIG_SCHEMA:-SYSDBA}
       DM_USERNAME: ${DM_USERNAME:-SYSDBA}
       DM_PASSWORD: ${DM_PASSWORD:-IntegritySupervision0}
     ports:
@@ -22,6 +23,12 @@ services:
       - "8849:8080"
       - "9848:9848"
       - "9849:9849"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8848/nacos/actuator/health >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 20s
     volumes:
       - ./nacos/conf/application.properties:/home/nacos/conf/application.properties:ro
       - ./nacos/plugins:/home/nacos/plugins:ro
@@ -33,11 +40,17 @@ services:
 
   redis:
     image: ${REDIS_IMAGE:-redis:latest}
+    pull_policy: if_not_present
     container_name: ${COMPOSE_PROJECT_NAME:-integrity}-redis
     restart: unless-stopped
     command: redis-server /home/integrity/redis/redis.conf
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
     volumes:
       - ./redis/conf/redis.conf:/home/integrity/redis/redis.conf:ro
       - redis-data:/data
@@ -46,6 +59,7 @@ services:
 
   sentinel:
     image: ${SENTINEL_IMAGE:-bladex/sentinel-dashboard:1.8.7}
+    pull_policy: if_not_present
     container_name: ${COMPOSE_PROJECT_NAME:-integrity}-sentinel
     restart: unless-stopped
     ports:
@@ -54,11 +68,12 @@ services:
       - integrity-net
 
   dm:
-    image: ${DM_IMAGE:-dm8_single:latest}
-    container_name: ${COMPOSE_PROJECT_NAME:-integrity}-dm
-    restart: unless-stopped
     profiles:
       - dm
+    image: ${DM_IMAGE:-dm8_single:latest}
+    pull_policy: if_not_present
+    container_name: ${COMPOSE_PROJECT_NAME:-integrity}-dm
+    restart: unless-stopped
     ports:
       - "5236:5236"
     volumes:
@@ -69,6 +84,7 @@ services:
 
   minio:
     image: ${MINIO_IMAGE:-quay.io/minio/minio:latest}
+    pull_policy: if_not_present
     container_name: ${COMPOSE_PROJECT_NAME:-integrity}-minio
     restart: unless-stopped
     command: server /data --console-address ":9001"
@@ -85,6 +101,7 @@ services:
 
   minio-init:
     image: ${MINIO_MC_IMAGE:-quay.io/minio/mc:latest}
+    pull_policy: if_not_present
     container_name: ${COMPOSE_PROJECT_NAME:-integrity}-minio-init
     depends_on:
       - minio

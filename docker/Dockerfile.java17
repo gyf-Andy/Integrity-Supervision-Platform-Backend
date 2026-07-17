@@ -1,4 +1,4 @@
-ARG JAVA17_IMAGE=eclipse-temurin:17-jre
+ARG JAVA17_IMAGE=eclipse-temurin:17-jdk
 FROM ${JAVA17_IMAGE}
 
 WORKDIR /app
