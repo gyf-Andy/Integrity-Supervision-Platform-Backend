@@ -1,0 +1,12 @@
+﻿{
+  "id": "prepare-offline-docker-dev-bundle",
+  "title": "准备内网离线 Docker 开发启动包与操作文档",
+  "status": "completed",
+  "complexity": "M",
+  "risk": "medium",
+  "domain": "infra",
+  "currentPhase": "completed",
+  "nextAction": "归档任务",
+  "createdAt": "2026-07-17T00:50:43Z",
+  "branch": "master"
+}
