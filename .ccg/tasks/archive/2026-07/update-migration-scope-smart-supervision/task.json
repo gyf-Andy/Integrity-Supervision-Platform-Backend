@@ -1,0 +1,12 @@
+{
+  "id": "update-migration-scope-smart-supervision",
+  "title": "补充原型迁移当前范围：聚焦智慧监管应用分系统",
+  "status": "completed",
+  "complexity": "S",
+  "risk": "low",
+  "domain": "frontend",
+  "currentPhase": "completed",
+  "nextAction": "归档任务并提交",
+  "createdAt": "2026-07-17T13:52:42+08:00",
+  "branch": "master"
+}

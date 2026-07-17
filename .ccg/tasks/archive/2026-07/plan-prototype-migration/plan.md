@@ -2,7 +2,9 @@
 
 ## 目标
 
-正式前后端当前已有页面能力，对应原型中的“系统安全管理分系统”。接下来迁移原型时，应按五个分系统重新组织正式前端文件结构，并且命名必须参照正式前端 `Integrity-Supervision-Platform-Frontend` 的现有格式。
+正式前端当前已有页面能力整体归入“系统安全管理分系统”，并且该分系统已开发完毕。接下来迁移原型时，当前开发重点只放在“智慧监管应用分系统”；其他分系统先作为首页内容模块保留展示，不规划点击后的页面跳转。
+
+长期目录规划仍按五个分系统组织，命名必须参照正式前端 `Integrity-Supervision-Platform-Frontend` 的现有格式。
 
 五个分系统为：
 
@@ -13,6 +15,13 @@
 - 系统安全管理分系统
 
 本文只规划前端文件结构和页面跳转关系，不实施迁移代码。
+
+## 当前阶段范围确认
+
+- 原型首页“核心监管业务”的五个模块都属于“智慧监管应用分系统”，包括：项目监督、招标采购监督、巡视整改监督、案件档案管理、监督信息管理/廉政信息管理。
+- 正式前端现有的 `system`、`monitor`、`tool`、`flow` 等代码，均作为“系统安全管理分系统”的已完成能力看待，不再迁移原型中的系统安全单页。
+- 下一阶段实际开发只推进“智慧监管应用分系统”。数据接引采报、数据模型分析、廉政态势展示等其他分系统当前只需要在首页保留内容模块或入口展示，不需要配置点击跳转和二级页面。
+- 首页可以展示五个分系统或核心业务内容模块，但非当前开发范围的模块应保持静态展示、禁用跳转，或仅保留占位状态。
 
 ## 正式前端命名基准
 
@@ -30,7 +39,7 @@ src/store/modules/tagsView.js
 
 因此迁移规划采用以下规则：
 
-- 顶层业务目录使用小驼峰或短小写：`dataIngestion`、`dataModelAnalysis`、`smartSupervision`、`integritySituation`、`securityManagement`。
+- 顶层业务目录使用小驼峰或短小写：`dataIngestion`、`dataModelAnalysis`、`smartSupervision`、`integritySituation`。系统安全管理当前沿用正式前端既有 `system`、`monitor`、`tool`、`flow`；只有后续单独立项补充缺口时，才考虑新增 `securityManagement`。
 - 路由主页面使用目录加 `index.vue`，例如 `views/dataIngestion/task/index.vue`。
 - 非路由子页面或详情页使用小驼峰 `.vue`，例如 `doneList.vue`、`authRole.vue` 这种风格。
 - 页面内部组件放在当前模块的 `components/` 目录，组件文件可使用 PascalCase，参照 `JobViewAdd.vue`。
@@ -52,21 +61,29 @@ src/store/modules/tagsView.js
 
 ## 推荐总目录
 
+以下总目录按当前开发优先级排列：先列本阶段实际开发的 `smartSupervision`，再列后续预留分系统和系统安全管理既有能力。
+
 ```text
 src/
 ├── views/
-│   ├── index.vue                         # 现有首页，可改造为五个分系统入口
-│   ├── dataIngestion/                    # 数据接引采报分系统
-│   ├── dataModelAnalysis/                # 数据模型分析
-│   ├── smartSupervision/                 # 智慧监管应用分系统
-│   ├── integritySituation/               # 廉政态势展示分系统
-│   └── securityManagement/               # 系统安全管理补充页，已有能力优先复用 system/monitor/tool
+│   ├── index.vue                         # 现有首页，保留五个分系统/核心内容模块展示
+│   ├── smartSupervision/                 # 智慧监管应用分系统，当前阶段实际开发
+│   ├── dataIngestion/                    # 数据接引采报分系统，后续预留
+│   ├── dataModelAnalysis/                # 数据模型分析，后续预留
+│   ├── integritySituation/               # 廉政态势展示分系统，后续预留
+│   ├── system/                           # 系统安全管理分系统既有能力
+│   ├── monitor/                          # 系统安全管理分系统既有能力
+│   ├── tool/                             # 系统安全管理分系统既有能力
+│   └── flow/                             # 系统安全管理分系统既有能力
 ├── api/
-│   ├── dataIngestion/
-│   ├── dataModelAnalysis/
 │   ├── smartSupervision/
-│   ├── integritySituation/
-│   └── securityManagement/
+│   ├── dataIngestion/                    # 后续预留
+│   ├── dataModelAnalysis/                # 后续预留
+│   ├── integritySituation/               # 后续预留
+│   ├── system/                           # 系统安全管理分系统既有能力
+│   ├── monitor/                          # 系统安全管理分系统既有能力
+│   ├── tool/                             # 系统安全管理分系统既有能力
+│   └── flow/                             # 系统安全管理分系统既有能力
 ├── store/
 │   └── modules/
 │       ├── dataIngestion.js              # 仅在确有跨页状态时新增
@@ -83,13 +100,16 @@ src/
 
 说明：
 
-- 分系统页面优先放在 `src/views/{module}` 下，和现有 `system`、`flow`、`monitor`、`tool` 平级。
+- 新开发分系统页面优先放在 `src/views/{module}` 下，和现有 `system`、`flow`、`monitor`、`tool` 平级。
+- 当前阶段只新建或迁移 `smartSupervision` 相关页面；`dataIngestion`、`dataModelAnalysis`、`integritySituation` 目录仅作为后续规划，不在本阶段创建空目录、页面和路由。
 - 分系统内部复用组件放在本分系统自己的 `components/` 中，不优先放全局 `src/components`。
 - 原型 mock 数据临时放入对应分系统的 `mock/` 或 `data/` 子目录，后续替换成 `src/api/{module}` 的正式接口。
 - 正式生产仍建议由后端菜单返回动态路由；本地静态路由只作为开发期兜底。
 - 各分系统内部采用“入口页 + 业务域目录 + 就近组件”的结构，例如 `dataModelAnalysis/asset/overview/index.vue`。
 
 ## 一、数据接引采报分系统
+
+当前阶段只在首页保留该分系统内容模块或入口展示，不实施点击跳转、路由和页面迁移。
 
 ### 原型跳转逻辑
 
@@ -172,6 +192,8 @@ src/api/dataIngestion/
 ```
 
 ## 二、数据模型分析
+
+当前阶段只在首页保留该分系统内容模块或入口展示，不实施点击跳转、路由和页面迁移。
 
 ### 原型跳转逻辑
 
@@ -351,6 +373,14 @@ src/api/dataModelAnalysis/
 
 ### 原型跳转逻辑
 
+原型首页“核心监管业务”中的五个模块均归入本分系统，是下一阶段优先迁移的业务范围：
+
+- 项目监督：归入 `smartSupervision/project`。
+- 招标采购监督：归入 `smartSupervision/procurement`。
+- 巡视整改监督：归入 `smartSupervision/inspection`。
+- 案件档案管理：归入 `smartSupervision/caseArchive`。
+- 监督信息管理/廉政信息管理：归入 `smartSupervision/integrityInfo`。
+
 原型中智慧监管应用由顶部/左侧业务菜单驱动，`SuperviseApp` 根据 route path 切换内部组件。主要业务链为：
 
 - 项目建设监督
@@ -360,6 +390,8 @@ src/api/dataModelAnalysis/
 - 廉政信息管理
 - 实体中心
 - 监督模型浮层
+
+其中前五项对应首页“核心监管业务”五个模块，是当前阶段的实际开发重点；实体中心和监督模型浮层可作为智慧监管应用内部支撑能力，按页面需要再迁移。
 
 原型同时存在旧版项目页面和新版项目监督页面。迁移规划中应合并到“项目建设监督”，避免重复形成两个顶级模块。
 
@@ -505,6 +537,8 @@ src/api/smartSupervision/
 
 ## 四、廉政态势展示分系统
 
+当前阶段只在首页保留该分系统内容模块或入口展示，不实施点击跳转、路由和页面迁移。
+
 ### 原型跳转逻辑
 
 态势展示是独立驾驶舱页面，内部通过顶部 tab 切换：
@@ -586,11 +620,11 @@ src/api/integritySituation/
 - 角色权限配置
 - 操作审计
 
-正式前端已经有系统管理、监控、文件、流程、代码生成等模块，并且后端也已有对应接口。迁移时应以正式前端现有结构为准，不建议把原型 `SystemSecurity` 单页整体搬入。
+正式前端已经有系统管理、监控、文件、流程、代码生成等模块，并且后端也已有对应接口。当前正式前端代码都归入“系统安全管理分系统”，并视为已开发完毕；迁移时应以正式前端现有结构为准，不再把原型 `SystemSecurity` 单页整体搬入。
 
 ### 推荐结构
 
-保留正式前端现有结构：
+保留正式前端现有结构，不新增系统安全管理目录：
 
 ```text
 src/views/system/
@@ -613,41 +647,23 @@ src/views/monitor/
 src/views/tool/
 ├── gen/
 └── build/
+
+src/views/flow/
+├── definition/
+├── notice/
+└── task/
+
+src/api/system/
+src/api/monitor/
+src/api/tool/
+└── gen.js
+
+src/api/flow/
+├── definition.js
+└── execute.js
 ```
 
-如需补充原型中正式前端缺失的安全管理页面，再按正式前端风格新增：
-
-```text
-src/views/securityManagement/
-├── index.vue
-├── unit/
-│   └── index.vue
-├── permissionPolicy/
-│   └── index.vue
-├── dataSource/
-│   └── index.vue
-├── file/
-│   └── index.vue
-├── rolePermission/
-│   └── index.vue
-├── audit/
-│   └── index.vue
-└── components/
-    ├── UnitPanel.vue
-    ├── PermissionPolicyPanel.vue
-    ├── DataSourcePanel.vue
-    ├── FilePanel.vue
-    ├── RolePermissionPanel.vue
-    └── AuditPanel.vue
-
-src/api/securityManagement/
-├── unit.js
-├── permissionPolicy.js
-├── dataSource.js
-├── file.js
-├── rolePermission.js
-└── audit.js
-```
+当前阶段不新增 `securityManagement` 目录，也不补迁系统安全相关原型页面。如后续发现正式前端确有缺口，再单独立项评估。
 
 ### 路由建议
 
@@ -663,18 +679,12 @@ src/api/securityManagement/
 /monitor/online
 /monitor/job
 /tool/gen
+/flow/definition
+/flow/task
+/flow/notice
 ```
 
-新增页面才使用：
-
-```text
-/securityManagement/unit
-/securityManagement/permissionPolicy
-/securityManagement/dataSource
-/securityManagement/file
-/securityManagement/rolePermission
-/securityManagement/audit
-```
+当前阶段不新增系统安全管理路由。
 
 ## 公共能力规划
 
@@ -726,34 +736,39 @@ integritySituation/overview/index
 system/user/index
 ```
 
+以上示例包含长期规划路径；第一阶段只配置 `smartSupervision` 相关路径和正式前端既有系统安全管理路径。
+
 其中系统安全管理已有页面继续使用现有路径，不强行搬到 `securityManagement`。
 
 ## 第一阶段建议落地范围
 
-第一阶段只做“结构骨架 + 五个分系统入口”，不要一次性迁所有面板：
+第一阶段从“首页内容模块 + 智慧监管应用分系统”开始，不再做五个分系统的可点击入口骨架。其他分系统只在首页 `src/views/index.vue` 中保留静态展示内容，不单独创建占位目录，不配置跳转和二级页面。
 
 ```text
-src/views/index.vue
-src/views/dataIngestion/index.vue
-src/views/dataModelAnalysis/index.vue
+src/views/index.vue                         # 包含五个分系统/核心内容模块静态展示，非当前范围模块不跳转
 src/views/smartSupervision/index.vue
-src/views/integritySituation/index.vue
-src/views/securityManagement/index.vue
-src/api/dataIngestion/
-src/api/dataModelAnalysis/
+src/views/smartSupervision/project/index.vue
+src/views/smartSupervision/procurement/index.vue
+src/views/smartSupervision/inspection/index.vue
+src/views/smartSupervision/caseArchive/index.vue
+src/views/smartSupervision/integrityInfo/index.vue
 src/api/smartSupervision/
-src/api/integritySituation/
 ```
 
 验收目标：
 
-- 正式前端登录后能看到五个分系统入口。
-- 每个入口能进入对应分系统首页。
-- 后端菜单 component 路径和正式前端文件路径一致。
+- 正式前端登录后能看到五个分系统或核心内容模块展示。
+- 数据接引采报、数据模型分析、廉政态势展示等非当前开发模块仅展示，不配置点击跳转。
+- 原型首页“核心监管业务”五个模块全部落入 `smartSupervision` 下的清晰目录。
+- 系统安全管理继续复用正式前端现有 `system`、`monitor`、`tool`、`flow` 等路径，不新增 `securityManagement`。
+- 如配置后端菜单，`component` 路径和正式前端 `smartSupervision` 文件路径一致。
 - `npm run build:prod` 通过。
 
-## 需要确认的问题
+## 已确认结论
 
-1. 顶部一级导航是否就固定为五个分系统，还是继续保留正式前端现有“系统管理/流程/监控/工具”菜单，把五个分系统作为新增业务菜单？
-2. “数据接引采报分系统”的正式名称是否采用“接引”还是原型文档中的“引接”？建议产品文案统一后再落表和路由。
-3. 系统安全管理是否完全复用现有正式前端系统管理，还是需要补迁原型中的“单位管理、数据源管理、文件管理、角色权限配置、操作审计”等页面？
+1. 原型首页“核心监管业务”五个模块归入“智慧监管应用分系统”。
+2. 正式前端当前代码归入“系统安全管理分系统”，并且该分系统已开发完毕。
+3. 下一阶段只开发“智慧监管应用分系统”；其他分系统暂不考虑点击后的页面跳转，只在首页保留内容模块展示。
+4. 第一阶段首页展示五个分系统或核心业务内容模块；非智慧监管应用分系统的模块只做静态展示，不单独创建占位页面。
+5. 分系统名称当前统一采用“数据接引采报分系统”，不再使用“引接”作为目录或路由命名依据。
+6. 系统安全管理继续复用正式前端现有 `system`、`monitor`、`tool`、`flow` 目录，不新增 `securityManagement`。
