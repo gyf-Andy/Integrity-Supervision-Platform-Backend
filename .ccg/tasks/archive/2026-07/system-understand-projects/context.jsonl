@@ -1,0 +1,18 @@
+{"path":"D:\\CodeProject\\antigraviry_repository\\Integrity-Supervision-Platform-Backend\\pom.xml","reason":"后端 Maven 父工程、版本与模块声明"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\Integrity-Supervision-Platform-Backend\\docker\\.env.example","reason":"Docker 环境变量与达梦/Nacos/Redis/MinIO 配置模板"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\Integrity-Supervision-Platform-Backend\\docker\\docker-compose.infra.yml","reason":"基础设施容器编排"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\Integrity-Supervision-Platform-Backend\\docker\\docker-compose.apps.yml","reason":"后端微服务与 Nginx 容器编排"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\Integrity-Supervision-Platform-Backend\\docker\\nginx\\conf\\nginx.conf","reason":"生产前端和 /prod-api 网关代理"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\Integrity-Supervision-Platform-Backend\\integrity-gateway\\src\\main\\resources\\bootstrap.yml","reason":"网关端口、Nacos、Sentinel 配置"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\Integrity-Supervision-Platform-Backend\\integrity-auth\\src\\main\\java\\com\\integrity\\auth\\controller\\TokenController.java","reason":"登录登出刷新注册接口"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\Integrity-Supervision-Platform-Frontend\\package.json","reason":"正式前端技术栈和脚本"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\Integrity-Supervision-Platform-Frontend\\vite.config.js","reason":"开发端口与 /dev-api 代理"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\Integrity-Supervision-Platform-Frontend\\src\\utils\\request.js","reason":"Axios 封装、Token 注入与错误处理"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\Integrity-Supervision-Platform-Frontend\\src\\permission.js","reason":"正式前端路由守卫"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\Integrity-Supervision-Platform-Frontend\\src\\store\\modules\\permission.js","reason":"后端动态菜单转换为 Vue 路由"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\lz\\package.json","reason":"原型项目技术栈和脚本"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\lz\\src\\router\\index.ts","reason":"原型路由与业务页面入口"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\lz\\src\\components\\AppLayout.vue","reason":"原型主导航结构"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\lz\\src\\services\\dataCollection.ts","reason":"原型业务 mock 数据服务"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\lz\\src\\services\\llmService.ts","reason":"原型 LLM 直连调用方式"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\lz\\docs\\系统设计方案汇报.md","reason":"原型业务架构说明"}

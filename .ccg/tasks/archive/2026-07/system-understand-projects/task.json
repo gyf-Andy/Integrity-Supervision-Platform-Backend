@@ -1,0 +1,12 @@
+{
+  "id": "system-understand-projects",
+  "title": "系统了解后端、前端与原型静态页面项目",
+  "status": "in_progress",
+  "complexity": "M",
+  "risk": "low",
+  "domain": "fullstack",
+  "currentPhase": "completed",
+  "nextAction": "归档任务",
+  "createdAt": "2026-07-17T00:00:00Z",
+  "branch": "master"
+}
