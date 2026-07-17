@@ -1,0 +1,12 @@
+{
+  "id": "fix-homepage-prototype-flow",
+  "title": "修正登录后首页为原型首页并通过用户浮层进入系统管理",
+  "status": "completed",
+  "complexity": "M",
+  "risk": "medium",
+  "domain": "frontend",
+  "currentPhase": "completed",
+  "nextAction": "归档任务并提交",
+  "createdAt": "2026-07-17T15:32:00+08:00",
+  "branch": "master"
+}

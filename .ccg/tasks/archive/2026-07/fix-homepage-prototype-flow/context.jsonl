@@ -1,0 +1,3 @@
+{"path":"D:\\CodeProject\\antigraviry_repository\\Integrity-Supervision-Platform-Frontend\\src\\router\\index.js","reason":"修正 /index 独立首页路由和 smartSupervision 隐藏路由"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\Integrity-Supervision-Platform-Frontend\\src\\views\\index.vue","reason":"按原型首页重建布局、用户 hover 浮层和跳转逻辑"}
+{"path":"D:\\CodeProject\\antigraviry_repository\\lz\\src\\views\\overview\\Overview.vue","reason":"原型首页布局、样式和核心业务跳转参考"}
