@@ -1,0 +1,12 @@
+﻿{
+  "id": "check-vscode-maven-repository-setting",
+  "title": "确认 VS Code 中配置的 Maven 本地仓库路径",
+  "status": "completed",
+  "complexity": "S",
+  "risk": "low",
+  "domain": "infra",
+  "currentPhase": "completed",
+  "nextAction": "归档任务",
+  "createdAt": "2026-07-17T01:41:08Z",
+  "branch": "master"
+}
