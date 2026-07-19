@@ -1,0 +1,12 @@
+{
+  "id": "offline-docker-run",
+  "title": "说明如何在离线电脑上使用 Docker 启动项目",
+  "status": "completed",
+  "complexity": "S",
+  "risk": "low",
+  "domain": "devops",
+  "currentPhase": "completed",
+  "nextAction": "已整理离线 Docker 启动步骤",
+  "createdAt": "2026-07-19T11:50:00Z",
+  "branch": "master"
+}
