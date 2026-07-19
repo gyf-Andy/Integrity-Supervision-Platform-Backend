@@ -130,8 +130,8 @@ Docker 模式默认使用 MinIO 作为文件存储。
 `docker/.env` 中的关键变量：
 
 ```env
-MINIO_IMAGE=quay.io/minio/minio:latest
-MINIO_MC_IMAGE=quay.io/minio/mc:latest
+MINIO_IMAGE=quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
+MINIO_MC_IMAGE=quay.io/minio/mc:RELEASE.2025-08-13T08-35-41Z
 MINIO_ENABLED=true
 MINIO_CLIENT_ADDR=http://minio:9000
 MINIO_PUBLIC_URL=http://localhost:9000
@@ -157,7 +157,7 @@ http://localhost:9001
 
 默认登录账号和密码由 `MINIO_ACCESS_KEY`、`MINIO_SECRET_KEY` 控制。
 
-如果从 Docker Hub 拉取 `minio/minio:latest` 时遇到 CloudFront `EOF`，
+如果从 Docker Hub 拉取 MinIO 镜像时遇到 CloudFront `EOF`，
 可以使用上面的默认 `quay.io/minio/...` 镜像，或者将 `MINIO_IMAGE`、
 `MINIO_MC_IMAGE` 指向内网镜像仓库。
 
@@ -171,9 +171,9 @@ docker compose -f docker/docker-compose.infra.yml pull minio minio-init
 # 方式 B：从离线 tar 包导入镜像，然后打成 .env 中配置的标签：
 docker load -i minio.tar
 docker load -i mc.tar
-docker tag <已导入的MinIO镜像> quay.io/minio/minio:latest
-docker tag <已导入的mc镜像> quay.io/minio/mc:latest
+docker tag <已导入的MinIO镜像> quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
+docker tag <已导入的mc镜像> quay.io/minio/mc:RELEASE.2025-08-13T08-35-41Z
 ```
 
 也可以直接修改 `docker/.env` 中的 `MINIO_IMAGE` 和 `MINIO_MC_IMAGE`，
-让它们指向内网镜像仓库，例如 `registry.example.com/minio/minio:latest`。
+让它们指向内网镜像仓库，例如 `registry.example.com/minio/minio:RELEASE.2025-09-07T16-13-09Z`。
