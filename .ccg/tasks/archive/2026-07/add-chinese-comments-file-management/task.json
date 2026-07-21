@@ -1,0 +1,12 @@
+{
+  "id": "add-chinese-comments-file-management",
+  "title": "为文件管理新增代码补充中文注释",
+  "status": "completed",
+  "complexity": "S",
+  "risk": "low",
+  "domain": "backend",
+  "currentPhase": "completed",
+  "nextAction": "归档任务",
+  "createdAt": "2026-07-21T05:30:00Z",
+  "branch": "master"
+}
