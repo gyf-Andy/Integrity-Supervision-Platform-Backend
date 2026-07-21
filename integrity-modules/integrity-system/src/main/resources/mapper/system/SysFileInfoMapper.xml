@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.integrity.system.mapper.SysFileInfoMapper">
+
+    <resultMap type="SysFileInfo" id="SysFileInfoResult">
+        <id     property="fileId"       column="file_id"       />
+        <result property="originalName" column="original_name" />
+        <result property="fileName"     column="file_name"     />
+        <result property="fileSuffix"   column="file_suffix"   />
+        <result property="contentType"  column="content_type"  />
+        <result property="fileSize"     column="file_size"     />
+        <result property="url"          column="url"           />
+        <result property="createBy"     column="create_by"     />
+        <result property="createTime"   column="create_time"   />
+        <result property="updateBy"     column="update_by"     />
+        <result property="updateTime"   column="update_time"   />
+        <result property="remark"       column="remark"        />
+    </resultMap>
+
+    <sql id="selectFileInfoVo">
+        select file_id, original_name, file_name, file_suffix, content_type, file_size, url,
+               create_by, create_time, update_by, update_time, remark
+        from sys_file_info
+    </sql>
+
+    <select id="selectFileInfoList" parameterType="SysFileInfo" resultMap="SysFileInfoResult">
+        <include refid="selectFileInfoVo"/>
+        <where>
+            <if test="originalName != null and originalName != ''">
+                AND original_name like '%' || #{originalName} || '%'
+            </if>
+            <if test="fileName != null and fileName != ''">
+                AND file_name like '%' || #{fileName} || '%'
+            </if>
+            <if test="fileSuffix != null and fileSuffix != ''">
+                AND file_suffix = #{fileSuffix}
+            </if>
+            <if test="contentType != null and contentType != ''">
+                AND content_type like '%' || #{contentType} || '%'
+            </if>
+            <if test="createBy != null and createBy != ''">
+                AND create_by like '%' || #{createBy} || '%'
+            </if>
+            <if test="params.beginTime != null and params.beginTime != ''">
+                and TO_CHAR(create_time,'YYYY-MM-DD') &gt;= SUBSTR(#{params.beginTime}, 1, 10)
+            </if>
+            <if test="params.endTime != null and params.endTime != ''">
+                and TO_CHAR(create_time,'YYYY-MM-DD') &lt;= SUBSTR(#{params.endTime}, 1, 10)
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="selectFileInfoById" parameterType="String" resultMap="SysFileInfoResult">
+        <include refid="selectFileInfoVo"/>
+        where file_id = #{fileId}
+    </select>
+
+    <select id="selectFileInfoByUrl" parameterType="String" resultMap="SysFileInfoResult">
+        <include refid="selectFileInfoVo"/>
+        where url = #{url}
+        FETCH FIRST 1 ROWS ONLY
+    </select>
+
+    <insert id="insertFileInfo" parameterType="SysFileInfo">
+        insert into sys_file_info (
+            file_id,
+            original_name,
+            file_name,
+            file_suffix,
+            content_type,
+            file_size,
+            url,
+            create_by,
+            remark,
+            create_time
+        ) values (
+            #{fileId},
+            #{originalName},
+            #{fileName},
+            #{fileSuffix},
+            #{contentType},
+            #{fileSize},
+            #{url},
+            #{createBy},
+            #{remark},
+            sysdate()
+        )
+    </insert>
+
+    <update id="updateFileInfo" parameterType="SysFileInfo">
+        update sys_file_info
+        <set>
+            original_name = #{originalName},
+            file_name = #{fileName},
+            file_suffix = #{fileSuffix},
+            content_type = #{contentType},
+            file_size = #{fileSize},
+            url = #{url},
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_time = sysdate()
+        </set>
+        where file_id = #{fileId}
+    </update>
+
+    <delete id="deleteFileInfoByIds">
+        delete from sys_file_info where file_id in
+        <foreach item="fileId" collection="array" open="(" separator="," close=")">
+            #{fileId}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,51 +1,42 @@
 package com.integrity.system.api.domain;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import java.io.Serializable;
+import lombok.Data;
 
 /**
- * 文件信息
- * 
+ * 文件上传响应与元数据信息。
+ *
  * @author Integrity-Supervision-Platform
  */
-public class SysFile
+@Data
+public class SysFile implements Serializable
 {
-    /**
-     * 文件名称
-     */
+    private static final long serialVersionUID = 1L;
+
+    /** 文件记录编号 */
+    private String fileId;
+
+    /** 兼容原上传接口返回的文件名称 */
     private String name;
 
-    /**
-     * 文件地址
-     */
+    /** 文件访问地址 */
     private String url;
 
-    public String getName()
-    {
-        return name;
-    }
+    /** 上传时的原始文件名 */
+    private String originalName;
 
-    public void setName(String name)
-    {
-        this.name = name;
-    }
+    /** 存储后的文件名 */
+    private String fileName;
 
-    public String getUrl()
-    {
-        return url;
-    }
+    /** 文件后缀 */
+    private String fileSuffix;
 
-    public void setUrl(String url)
-    {
-        this.url = url;
-    }
+    /** 文件内容类型 */
+    private String contentType;
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("name", getName())
-            .append("url", getUrl())
-            .toString();
-    }
+    /** 文件大小，单位字节 */
+    private Long fileSize;
+
+    /** 上传人 */
+    private String createBy;
 }
-

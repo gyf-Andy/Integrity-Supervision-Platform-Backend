@@ -1,0 +1,12 @@
+{
+  "id": "file-management",
+  "title": "在系统管理中添加文件管理功能",
+  "status": "completed",
+  "complexity": "L+",
+  "risk": "medium",
+  "domain": "fullstack",
+  "currentPhase": "completed",
+  "nextAction": "归档任务",
+  "createdAt": "2026-07-21T03:55:58Z",
+  "branch": "master"
+}

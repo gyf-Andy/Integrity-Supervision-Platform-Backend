@@ -1,0 +1,12 @@
+{
+  "id": "use-lombok-file-models",
+  "title": "文件管理新增模型类改用 Lombok",
+  "status": "completed",
+  "complexity": "S",
+  "risk": "low",
+  "domain": "backend",
+  "currentPhase": "completed",
+  "nextAction": "归档任务",
+  "createdAt": "2026-07-21T05:20:00Z",
+  "branch": "master"
+}
