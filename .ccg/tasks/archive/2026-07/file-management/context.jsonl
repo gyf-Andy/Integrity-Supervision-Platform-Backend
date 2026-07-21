@@ -1,0 +1,7 @@
+{"path":"integrity-modules/integrity-file/src/main/java/com/integrity/file/controller/SysFileController.java","reason":"existing upload endpoint"}
+{"path":"integrity-modules/integrity-file/src/main/java/com/integrity/file/IntegrityFileApplication.java","reason":"file service excludes datasource and needs Feign enablement"}
+{"path":"integrity-api/integrity-api-system/src/main/java/com/integrity/system/api/domain/SysFile.java","reason":"shared upload response DTO"}
+{"path":"integrity-modules/integrity-system/src/main/java/com/integrity/system/controller/SysConfigController.java","reason":"system management CRUD pattern"}
+{"path":"integrity-modules/integrity-system/src/main/resources/mapper/system/SysConfigMapper.xml","reason":"MyBatis XML and date range query pattern"}
+{"path":"D:/CodeProject/antigraviry_repository/Integrity-Supervision-Platform-Frontend/src/views/system/post/index.vue","reason":"frontend system CRUD page pattern"}
+{"path":"D:/CodeProject/antigraviry_repository/Integrity-Supervision-Platform-Frontend/src/api/system/post.js","reason":"frontend system API wrapper pattern"}
