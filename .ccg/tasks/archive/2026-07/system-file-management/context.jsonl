@@ -1,0 +1,5 @@
+{"path":"integrity-modules/integrity-file/src/main/java/com/integrity/file/controller/SysFileController.java","reason":"existing upload endpoint returns SysFile without persistence"}
+{"path":"integrity-api/integrity-api-system/src/main/java/com/integrity/system/api/domain/SysFile.java","reason":"shared upload response object"}
+{"path":"integrity-modules/integrity-system/src/main/java/com/integrity/system/controller/SysProfileController.java","reason":"existing user avatar upload flow"}
+{"path":"integrity-modules/integrity-system/src/main/java/com/integrity/system/controller/SysConfigController.java","reason":"reference pattern for system management list/detail endpoints"}
+{"path":"integrity-modules/integrity-system/src/main/resources/mapper/system/SysConfigMapper.xml","reason":"reference pattern for MyBatis mapper SQL"}

@@ -1,0 +1,12 @@
+{
+  "id": "system-file-management",
+  "title": "在系统管理中添加用户上传文件查询和查看功能",
+  "status": "completed",
+  "complexity": "M",
+  "risk": "medium",
+  "domain": "backend",
+  "currentPhase": "completed",
+  "nextAction": "归档任务",
+  "createdAt": "2026-07-21T00:00:00Z",
+  "branch": "master"
+}
